@@ -15,6 +15,13 @@ const words = (list, start, step = 70) =>
     })
     .join("");
 
+// Template files left out of the site: the Framer badge and the template's owner guide
+export const skip = [
+  "_framer/PX9hIOIVM.DMy55LIA.mjs",
+  "_framer/6H26Prrb4o9YLlvJ19pFbm6dirpK58LxZsXp2aIr1_o.C0STWohU.mjs",
+  "_framer/TegEJwv_9QP-xncCqyn1YiXZRjiOpfJb5rK3ryDoN4w.C2O1eTM2.mjs",
+];
+
 export const booking = "https://calendly.com/hamzaabialal/free-ai-automation-discovery-call";
 const CALENDLY = booking;
 
@@ -237,6 +244,16 @@ const sitewide = [
     "__html:Gr+Yr+ni}}),d(`span`,{className:`fcr-q`",
     "__html:Gr+Yr+ni+`" + VIDEO_CSS + "`}}),d(`span`,{className:`fcr-q`",
   ],
+  // No "Made in Framer" badge rendered by the runtime
+  ["(function(){Yf&&a(()=>{ee(document.getElementById(`__framer-badge-container`),m(g,{},m(h(()=>import(`./PX9hIOIVM.DMy55LIA.mjs`)))))})})()", "void 0"],
+  // Footer copyright
+  ["`© 2026 `,g.name||`Flowcraft`,`. `,a]", "`© 2026 `,g.name||`Flowcraft`,`. All rights reserved. `,a]"],
+  // The template's owner guide (/start-here) is removed; that address shows the 404 page
+  ["import(`./6H26Prrb4o9YLlvJ19pFbm6dirpK58LxZsXp2aIr1_o.C0STWohU.mjs`)),path:`/start-here`",
+    "import(`./5akXRPcSCb2Rk8rXP7L7NwEaqhqBtWDR4GhPImfzy14.JT7mbZR2.mjs`)),path:`/start-here`"],
+  // Script folder and runtime file without the Framer name
+  ["/_framer/", "/_app/"],
+  ["framer.0pITv1M6.mjs", "runtime.0pITv1M6.mjs"],
   // Logo: header and footer use the Automyra AI mark
   ["fe=({s:e=18})=>x(`svg`,{viewBox:`0 0 24 24`,width:e,height:e,\"aria-hidden\":!0,children:x(`path`,{d:`" + SPARK + "`})})",
     "fe=({s:e=22})=>" + logoSvgJs("e")],
@@ -752,6 +769,16 @@ const ssr = [
 
 export const html = [
   ...ssr,
+  // No Framer branding: badge, page comments, generator tag, editor loader, analytics and the template's demo bar
+  [/<div id="__framer-badge-container">[\s\S]*?<\/a>(?:<!--\/\$-->)*<\/div>/g, "", "badge html"],
+  [/<!-- Made in Framer · framer\.com -->/g, "<!-- Automyra AI · automyra ai agency -->", "made-in comment"],
+  [/<!-- Published [^>]*-->/g, "", "published comment"],
+  [/(<span>© 2026 <!-- -->[^<]*<!-- -->)\. <\/span>/g, "$1. All rights reserved. </span>", "copyright html"],
+  [/\s*<meta name="generator" content="Framer[^"]*">/g, "", "generator meta"],
+  [/<script>try\{if\(localStorage\.getItem\("__framer_force_showing_editorbar_since"\)\)[\s\S]*?<\/script>/g, "", "editor bar"],
+  [/<script async src="https:\/\/events\.framer\.com\/script[^"]*"[^>]*><\/script>/g, "", "analytics"],
+  [/<script>\s*\/\*! SoloFoundry demo bar[\s\S]*?<\/script>/g, "", "demo bar"],
+
   // Logo in the server-rendered header and footer
   [/(<a class="fchd-logo"[^>]*>)<svg[^>]*><path d="M12 1\.5C[^"]*"\/><\/svg>/g, "$1" + logoSvgHtml(22), "header logo"],
   [/(<a class="fco-logo"[^>]*>)<svg class="fco-sp"[^>]*><path d="M12 1\.5C[^"]*"\/><\/svg>/g, "$1" + logoSvgHtml(30), "footer logo"],

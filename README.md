@@ -1,15 +1,16 @@
 # Automyra AI website
 
-The original Flowcraft Framer template (design and animations unchanged) with Automyra AI content.
+The Automyra AI website: the original Flowcraft template design and animations, with Automyra AI content.
 
 ## How it works
 
-- `_original/` is an untouched copy of the Framer export. Never edit it.
+- `_original/` is an untouched copy of the original template export. Never edit it.
 - `content.mjs` lists every text change as `[find, replace]` rules.
-- `node apply.mjs` rebuilds the site pages and `_framer/` scripts from `_original/` + `content.mjs`.
+- `node apply.mjs` rebuilds the site pages and the `_app/` scripts from `_original/` + `content.mjs`.
   It prints any rule that no longer matches anything.
 - `node serve.mjs` serves the site at http://localhost:4321 (clean URLs like `/services`).
 - `assets/` holds the initials avatars used for the team and reviews.
+- `brand/` holds the logo, favicon, app icons and the social share image.
 
 To change text: edit `content.mjs`, run `node apply.mjs`, refresh the browser.
 
