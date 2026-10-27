@@ -521,12 +521,14 @@ const sitewide = [
     "Tell us what your team repeats every week. A person from our team replies within a few hours, not a bot.",
   ],
   ["We will reply within two working hours. Your reference is", "Thanks! Your message is in our inbox, and a person will reply by email within a few hours. Reference"],
-  // Contact form: the message is emailed to CONTACT_INBOX through FormSubmit; if that fails, WhatsApp opens with it instead
+  // Contact form: the message is emailed to CONTACT_INBOX through FormSubmit. FormSubmit takes 20–30 s to answer, so the
+  // form shows "sent" at once and the request finishes in the background (keepalive survives leaving the page).
+  // A failed send is retried once; if that fails too, WhatsApp opens with the message (the browser may block that pop-up).
   [
     "try{_&&await fetch(_,{method:`POST`,headers:{\"Content-Type\":`application/json`,Accept:`application/json`},body:JSON.stringify({...F,topic:M[N]?M[N].t:``,ref:n})})}catch{}",
-    "try{let fr=await fetch(_||`" + CONTACT_ENDPOINT + "`,{method:`POST`,headers:{\"Content-Type\":`application/json`,Accept:`application/json`}," +
-      "body:JSON.stringify({name:F.name,email:F.email,company:F.company,topic:M[N]?M[N].t:``,message:F.msg,ref:n,_subject:`Website message from ${F.name} (${n})`,_replyto:F.email,_template:`table`})});if(!fr.ok)throw 0}" +
-      `catch{window.open("${WHATSAPP}?text="+encodeURIComponent("Hi Automyra AI, I'm "+F.name+(F.company?" from "+F.company:"")+" ("+F.email+").\\nTopic: "+(M[N]?M[N].t:"")+"\\n\\n"+F.msg),"_blank")}`,
+    "{let fb=JSON.stringify({name:F.name,email:F.email,company:F.company,topic:M[N]?M[N].t:``,message:F.msg,ref:n,_subject:`Website message from ${F.name} (${n})`,_replyto:F.email,_template:`table`})," +
+      "fs=()=>fetch(_||`" + CONTACT_ENDPOINT + "`,{method:`POST`,keepalive:!0,headers:{\"Content-Type\":`application/json`,Accept:`application/json`},body:fb}).then(r=>{if(!r.ok)throw 0});" +
+      `fs().catch(fs).catch(()=>{window.open("${WHATSAPP}?text="+encodeURIComponent("Hi Automyra AI, I'm "+F.name+(F.company?" from "+F.company:"")+" ("+F.email+").\\nTopic: "+(M[N]?M[N].t:"")+"\\n\\n"+F.msg),"_blank")})}`,
     "contact form",
   ],
 
