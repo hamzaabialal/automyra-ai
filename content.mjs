@@ -192,6 +192,9 @@ const IMG = "https://framerusercontent.com/images/";
 const WHATSAPP = "https://wa.me/923047670164";
 const UPWORK = "https://www.upwork.com/agencies/2001333416097289203/";
 const EMAIL2 = "sirajsoban1@gmail.com";
+// Contact form messages go to this inbox via FormSubmit (the first message sends an activation email there)
+const CONTACT_INBOX = "hamzaabialal@gmail.com";
+const CONTACT_ENDPOINT = "https://formsubmit.co/ajax/" + CONTACT_INBOX;
 // Logo mark (24x24): the "A" in mint with the template's spark inside, which takes the text colour
 const SPARK = "M12 1.5C12.9 8 16 11.1 22.5 12 16 12.9 12.9 16 12 22.5 11.1 16 8 12.9 1.5 12 8 11.1 11.1 8 12 1.5Z";
 const LOGO_MARK =
@@ -517,11 +520,14 @@ const sitewide = [
     "Tell us what your team repeats every week. A person from our team replies within two working hours, not a bot.",
     "Tell us what your team repeats every week. A person from our team replies within a few hours, not a bot.",
   ],
-  ["`Message received.`", "`Almost there.`"],
-  ["We will reply within two working hours. Your reference is", "WhatsApp opened with your message. Press send and we'll reply within a few hours. Reference"],
+  ["We will reply within two working hours. Your reference is", "Thanks! Your message is in our inbox, and a person will reply by email within a few hours. Reference"],
+  // Contact form: the message is emailed to CONTACT_INBOX through FormSubmit; if that fails, WhatsApp opens with it instead
   [
-    "try{_&&await fetch(_,{method:`POST`",
-    `try{_||window.open("${WHATSAPP}?text="+encodeURIComponent("Hi Automyra AI, I'm "+F.name+(F.company?" from "+F.company:"")+" ("+F.email+").\\nTopic: "+(M[N]?M[N].t:"")+"\\n\\n"+F.msg),"_blank");_&&await fetch(_,{method:\`POST\``,
+    "try{_&&await fetch(_,{method:`POST`,headers:{\"Content-Type\":`application/json`,Accept:`application/json`},body:JSON.stringify({...F,topic:M[N]?M[N].t:``,ref:n})})}catch{}",
+    "try{let fr=await fetch(_||`" + CONTACT_ENDPOINT + "`,{method:`POST`,headers:{\"Content-Type\":`application/json`,Accept:`application/json`}," +
+      "body:JSON.stringify({name:F.name,email:F.email,company:F.company,topic:M[N]?M[N].t:``,message:F.msg,ref:n,_subject:`Website message from ${F.name} (${n})`,_replyto:F.email,_template:`table`})});if(!fr.ok)throw 0}" +
+      `catch{window.open("${WHATSAPP}?text="+encodeURIComponent("Hi Automyra AI, I'm "+F.name+(F.company?" from "+F.company:"")+" ("+F.email+").\\nTopic: "+(M[N]?M[N].t:"")+"\\n\\n"+F.msg),"_blank")}`,
+    "contact form",
   ],
 
   // Journal
