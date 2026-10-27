@@ -23,9 +23,10 @@ const count = (key, n) => hits.set(key, (hits.get(key) || 0) + n);
 rmSync(join(root, "_app"), { recursive: true, force: true });
 
 for (const src of files(original)) {
-  const rel = relative(original, src);
+  const rel = relative(original, src).replace(/\\/g, "/");
   if (skip.includes(rel)) continue;
-  let text = readFileSync(src, "utf8");
+  // Windows checkouts may have CRLF; rules are written with \n
+  let text = readFileSync(src, "utf8").replace(/\r\n/g, "\n");
   const isHtml = rel.endsWith(".html");
   for (const [from, to, group = from] of isHtml ? [...html, ...rules] : rules) {
     if (from instanceof RegExp) {

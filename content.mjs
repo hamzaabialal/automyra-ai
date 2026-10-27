@@ -202,6 +202,11 @@ const logoSvgJs = (size) =>
 const logoSvgHtml = (size) =>
   `<svg viewBox="0 0 24 24" width="${size}" height="${size}" style="animation:none;fill:none;flex:none" aria-hidden="true">${LOGO_MARK}</svg>`;
 const VIDEO = "Mj_4v-9_014";
+// Logo text in the header, phone menu and footer ("Automyra SI" + a small "Services")
+const LOGO_NAME = "Automyra SI";
+const LOGO_SUB_STYLE = "font-size:.55em;font-weight:500;letter-spacing:0;opacity:.7";
+const LOGO_SUB_JS = "x(`small`,{style:{fontSize:`.55em`,fontWeight:500,letterSpacing:`0`,opacity:.7},children:`Services`})";
+const LOGO_SUB_HTML = `<small style="${LOGO_SUB_STYLE}">Services</small>`;
 const VIDEO_CSS = [
   ".fcr-vid{position:relative;display:grid;grid-template-columns:1fr 1.45fr;gap:clamp(28px,4vw,72px);align-items:center;margin-top:clamp(80px,9vw,140px);padding-top:clamp(40px,5vw,72px);border-top:1px solid color-mix(in srgb,var(--fc-cloud) 12%,transparent)}",
   ".fcr-veb{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--fc-brass)}",
@@ -215,11 +220,68 @@ const VIDEO_CSS = [
 ].join("");
 
 // ---------- Everything else (applied first, so it matches the original text) ----------
+// Template stock photo id -> screenshot of our own build
+const SHOTS = {
+  // Case studies
+  OPO7hpxO5fFgicqBiebGwosE: "/assets/work/ai-call-desk.jpg",
+  xC399cfk7wneLE2CiZd0LCKY70: "/assets/work/rabbit-funding.png",
+  A1LSpWqZartLRT6sPWVxN0Ijbo: "/assets/work/hostyo.png",
+  hPOHK0EMfYfzD6Gkwr40RfxeeRk: "/assets/work/signal-law-group.png",
+  t7VGq6b8rzt8deI2pJExlQ61qzM: "/assets/work/centris.jpg",
+  // Journal covers
+  VDw9kSAfKcII06HWmBCzlXra2w: "/assets/work/journal-where-to-start.png",
+  "4Qy54YZKQfoqydh1duQiAZSMhBo": "/assets/work/journal-lead-scoring.jpg",
+  "24R6jbtpYqHNUCW6JkLpsEM4xr0": "/assets/work/journal-guardrails.png",
+  // Home: manifesto and impact-number photos
+  RQGrwUJccNUEUkzCxfYpHAsGBQw: "/assets/work/hostyo-finances.png",
+  ItanYfMXnkmn097dzhrIDLjQO5o: "/assets/work/guardxflow-history.png",
+  "2PmHWb54zFBlIcxhPzsEwd9E": "/assets/work/gym-plans.png",
+  zsA0OT2vZXb2Xy0iwnrRHTfWFKE: "/assets/work/gym-members.png",
+  // About page photo
+  O5reRIOLgNKSa6GakqcLWgTT8o: "/assets/work/gym-super-admin.png",
+};
+
+// About page story, one paragraph each; the last one describes the photo beside it
+const ABOUT_STORY = [
+  "Automyra AI started in 2025 in Karachi, when a small team of developers who had been building AI agents and n8n workflows for clients on Upwork decided to work as one studio.",
+  "We start with the work, not the model: we learn how your team does it today, find the hours, then build the agents, workflows and apps that take them back — with the logs and hand-over rules an operations lead would demand.",
+  "In the photo: the super-admin of a multi-gym platform we built and run. Every gym, its owners, Stripe account and status sit in one place, and each gym gets its own panel for members, plans, classes, programming and magic links.",
+];
+
+// Journal posts: an "About the cover" section after the body's last line, describing the screenshot used as the cover.
+// The body appears as JS, a data attribute, page JSON and rendered HTML, so each form gets a rule.
+const H2 = `<h2 style="font-family:var(--fc-font-d, 'Geist'), Inter, -apple-system, Arial, sans-serif;font-weight:var(--fc-font-dw, 500);font-style:normal">`;
+const aboutCover = (last, text) => {
+  const md = "\n\n## About the cover\n\n" + text;
+  return [
+    [last + "`,f6:", last + md + "`,f6:", last],
+    [last + '" data-f6', last + md + '" data-f6', last],
+    [last + '",{"type":6', last + JSON.stringify(md).slice(1, -1) + '",{"type":6', last],
+    [last + "</p>", last + "</p>" + H2 + "About the cover</h2><p>" + text + "</p>", last],
+  ];
+};
+const COVERS = [
+  ...aboutCover("Trust comes from the logs, not the demo.",
+    "The cover shows one of those quiet first wins: an n8n workflow that turns incoming tasks into calendar events on its own, with a branch for each type of task, so nobody copies them across by hand."),
+  ...aboutCover("reps start the day with the best leads at the top.",
+    "The cover shows a sister build in Zapier for project leads: each new lead in Google Sheets is validated, sorted by contact (no email, first or second contact, or early days), emailed through Gmail, analysed with AI by Zapier, logged in Zoho CRM and moved to the archive sheet."),
+  ...aboutCover("Agents that people trust enough to stop checking.",
+    "The cover is GuardXFlow, an invoice tool we built around this idea. AI reads every invoice, whether a PDF, a Word file or a phone photo, and fills in the supplier, number, date, subtotal and taxes. Nothing reaches the books until a person ticks the box to confirm they have verified the extracted information."),
+];
+
+// Service slug -> its case study slug
+const SERVICE_CASE = '{"voice-agents":"ai-voice-agent","workflow-automation":"centris","support-agents":"rabbit-funding","knowledge-base":"signal-law-group","custom-ai-apps":"hostyo"}';
+
 const sitewide = [
   // Service pages: show the matching case study (the template falls back to the first case)
   [
     "F=E.find(e=>String(e.f7||``).toLowerCase()===String(T.f1||``).toLowerCase())||E[0]",
-    'F=E.find(e=>e.slug==={"voice-agents":"ai-voice-agent","workflow-automation":"centris","support-agents":"rabbit-funding","knowledge-base":"signal-law-group","custom-ai-apps":"hostyo"}[T.slug])||E[0]',
+    "F=E.find(e=>e.slug===" + SERVICE_CASE + "[T.slug])||E[0]",
+  ],
+  // Services menu: the featured case follows the hovered service (the template picks by position)
+  [
+    "P=ae[ne%Math.max(1,ae.length)]||ae[0]",
+    "P=ae.find(e=>e.slug===" + SERVICE_CASE + "[(ie[ne]||{}).slug])||ae[ne%Math.max(1,ae.length)]||ae[0]",
   ],
   // Service pages: keep the "Other services" cards clear of the curved section below
   [".fcsv-others{margin-top:clamp(70px,8vw,120px)}", ".fcsv-others{margin-top:clamp(70px,8vw,120px);padding-bottom:clamp(60px,9vw,140px)}"],
@@ -257,7 +319,8 @@ const sitewide = [
   // Logo: header and footer use the Automyra AI mark
   ["fe=({s:e=18})=>x(`svg`,{viewBox:`0 0 24 24`,width:e,height:e,\"aria-hidden\":!0,children:x(`path`,{d:`" + SPARK + "`})})",
     "fe=({s:e=22})=>" + logoSvgJs("e")],
-  ["children:[x(ee,{}),g.name||`Flowcraft`]", "children:[" + logoSvgJs(30) + ",g.name||`Flowcraft`]"],
+  ["children:[x(ee,{}),g.name||`Flowcraft`]", "children:[" + logoSvgJs(30) + ",`" + LOGO_NAME + "`," + LOGO_SUB_JS + "]"],
+  ["children:[x(fe,{}),se]", "children:[x(fe,{}),`" + LOGO_NAME + "`," + LOGO_SUB_JS + "]"],
   // Site settings
   ...cms(
     "An AI agency that builds the agents and automations your team runs every day: support, sales ops and back office, live in weeks.",
@@ -274,13 +337,13 @@ const sitewide = [
   ["Services:/services, Work:/work, Pricing:/pricing, Book a call:/book", `Services:/services, Work:/work, Pricing:/pricing, Book a call:${CALENDLY}`],
   ["`Voice agent, Workflow, Knowledge base`", "`AI agent, n8n workflow, Lead scoring`"],
 
-  // Impact numbers (images kept)
-  ["12,000+|tasks our agents run every day|", "37+|automations & AI systems shipped|"],
-  ["94%|of conversations solved without a person|", "1,595 h|delivered for clients on Upwork|"],
-  ["31 h|given back to each person, every month|", "100%|Job Success on Upwork|"],
-  ["3 weeks|from the audit to a live agent|", "15|Upwork jobs completed|"],
+  // Impact numbers, each read from the dashboard in its screenshot (see SHOTS)
+  ["12,000+|tasks our agents run every day|", "33|properties run on the Hostyo owner portal|"],
+  ["94%|of conversations solved without a person|", "48|invoices processed in GuardXFlow's AI inbox|"],
+  ["31 h|given back to each person, every month|", "15|membership plans live on our gym platform|"],
+  ["3 weeks|from the audit to a live agent|", "6|gyms run from one super-admin we built|"],
   ["Numbers from agents in *production.*", "Numbers from systems in *production.*"],
-  ["Averages across 60+ live agents, measured in the client's own tools.", "From our Upwork agency profile and project history, 2025–2026."],
+  ["Averages across 60+ live agents, measured in the client's own tools.", "Read straight from the dashboards of systems we built and still run."],
 
   // Agent orbit
   [
@@ -345,6 +408,9 @@ const sitewide = [
   [IMG + "EafIAfdeuX4HicNn6hoUEhhCOs.webp", "/assets/team-mishaal.svg"],
   [IMG + "ofk1TJhVoioTNZgTMDue4RB7sQQ.webp", "/assets/team-asma.svg"],
 
+  // Stock photos replaced with screenshots of our own builds (see SHOTS)
+  ...Object.entries(SHOTS).map(([id, to]) => [IMG + id + ".webp", to]),
+
   // About page
   ["Operations people|who *build* agents.", "AI builders|who *ship* automations."],
   [
@@ -355,7 +421,7 @@ const sitewide = [
   ["We build the agents we|wished we *had.*", "Build it once,|so it *runs* on its own."],
   [
     "Flowcraft started in 2021 when our founders, both operations leads, spent a year automating their own teams' busywork. The tools were powerful but the projects kept failing for the same reason: nobody had mapped the work first.;So we built a studio that does it the other way round. We sit with your team, find the hours, then design, build and run the agents that take them back — with the logs and hand-over rules an operations lead would demand.",
-    "Automyra AI started in 2025 in Karachi, when a small team of developers who had been building AI agents and n8n workflows for clients on Upwork decided to work as one studio.;We start with the work, not the model: we learn how your team does it today, find the hours, then build the agents, workflows and apps that take them back — with the logs and hand-over rules an operations lead would demand.",
+    ABOUT_STORY.join(";"),
   ],
   [
     "Start with the work|We map the process before we touch a model. Most wins come from the boring middle of a workflow.;Keep a person in the loop|Every agent knows when to hand over, with a draft, and every action is logged.;Measure in hours|We report hours saved and errors caught, every month, in your own tools.",
@@ -363,7 +429,7 @@ const sitewide = [
   ],
   ["2021|founded in New York;60+|agents in production;31 h|saved per person, monthly;12|people, all builders",
     "2025|founded in Karachi;37+|systems shipped;1,595 h|delivered on Upwork;5|people, all builders"],
-  ["The Flowcraft team at work", "Automation work in progress"],
+  ["The Flowcraft team at work", "Super-admin of the multi-gym platform we built"],
 
   // Services page
   ["60+|agents live;94%|solved without a person;3 wks|to launch", "37+|systems shipped;100%|Job Success;1–4 wks|to launch"],
@@ -460,6 +526,7 @@ const sitewide = [
     "## The problem was the phone\n\nA third of calls rang out at lunch and after five.\n\n## What we built\n\nA voice agent that books, moves and confirms appointments in the practice software, in the clinic's own tone.\n\n## What happened\n\nBookings rose 38% in two months, and the front desk got eleven hours a week back.":
       "## The problem was the order\n\nReps called leads in the order they arrived, so the best merchants waited while time went to poor fits.\n\n## What we built\n\nAn n8n workflow that enriches each new lead, classifies its industry and revenue with AI, writes a score into Close CRM and sets 15- and 2-minute call reminders.\n\n## What changed\n\nEvery lead now has a score within minutes, and reps start the day with the best leads at the top.",
   }),
+  ...COVERS,
 
   // Legal
   ["Last updated 1 September 2026", "Last updated 27 October 2026"],
@@ -500,7 +567,7 @@ const cases = [
     "Six clinics shared one phone line. After 5 pm and at lunch, a third of calls rang out, and every missed call was a lost appointment.":
       "Calls after hours and in busy periods went to voicemail, and most of those callers never called back.",
     "A voice agent that answers in the clinic's own tone, books, moves and confirms appointments in the practice software, and hands anything clinical to a nurse.":
-      "A voice agent built on Vapi, Retell and Twilio with a natural ElevenLabs voice. It answers every call, qualifies the caller, books appointments and hands anything unusual to a person.",
+      "A voice agent built on Vapi, Retell and Twilio with a natural ElevenLabs voice. It answers every call, qualifies the caller, books appointments and hands anything unusual to a person. In the screenshot is the Zapier follow-up behind the calls: each new row in Google Sheets is filtered and sorted by call outcome (already completed, ready to award, interested or not ready yet), gets the matching Gmail follow-up, is logged in Zoho CRM and then moves to the year's archive sheet.",
     "+38%|appointments booked;0|missed calls after hours;4.8/5|caller rating;11 h|front-desk time back per week":
       "24/7|calls answered;0|missed calls after hours;361 h|engineering on Upwork;5.0★|client rating",
     "Patients can't tell it's an agent, and our front desk finally has time for the people in the room.":
@@ -520,7 +587,7 @@ const cases = [
     "Month-end took nine days: some 8,000 invoices, receipts and bank lines a month, matched by hand across three tools.":
       "Reps worked leads in the order they arrived, so the best merchants waited while time went to poor fits.",
     "An invoice agent that reads every document, matches it to purchase orders and bank lines, books it in Xero and sends only the exceptions to a person.":
-      "An n8n system that enriches every new lead, classifies it by industry and revenue, writes a score into Close CRM and sets 15- and 2-minute call reminders.",
+      "An n8n system that enriches every new lead, classifies it by industry and revenue, writes a score into Close CRM and sets 15- and 2-minute call reminders. In the screenshot is the LinkedIn side of the outreach: on a schedule, n8n collects everyone who liked or commented on recent posts, checks a Google Sheet for earlier contact, has Groq write the right message (a first DM, a deepen, a convert or a follow-up), sends it and logs the date back to the sheet.",
     "2 days|month-end close;1,900|invoices a week;97%|matched without a person;9 h|saved per week":
       "100%|leads scored;< 5 min|new lead to score;6 h|saved per rep weekly;24/7|running",
     "They found the nine hours a week we were wasting and automated them.":
@@ -541,7 +608,7 @@ const cases = [
     "Order questions, returns and delivery changes filled the help desk; replies took six hours at peak.":
       "Owner updates lived in spreadsheets and email threads, and the team spent hours every week answering the same owner questions.",
     "A support agent on chat and email that answers from Shopify and the shipping policy, processes returns and escalates with a drafted reply.":
-      "A React owner portal on Vercel with Notion as the data layer: properties, bookings and statements, with each owner seeing only their own.",
+      "A React owner portal on Vercel with Notion as the data layer: properties, bookings and statements, with each owner seeing only their own. In the screenshot is the home dashboard: balance on hold, payouts and expenses this month, the forecast from upcoming reservations, and guests in house and next arrivals from Airbnb and Booking.com. Behind it sit reservations with gross, deductions and payout per booking, monthly management-fee reports, and user admin with owner invites and impersonation.",
     "71%|tickets solved by AI;38 s|first reply;+9 pts|CSAT;3x|tickets per person":
       "4 wks|kickoff to live;24/7|owner self-service;1|portal for every owner;5.0★|client rating",
     "71% of our tickets close without a person, and CSAT went up.": "Perfect work, highly recommended for custom coding solutions!",
@@ -558,7 +625,7 @@ const cases = [
     "Fourteen years of matters sat in folders only the partners knew how to search.":
       "The team read long SEC proxy filings by hand to pull out each ballot item before any analysis could start.",
     "A private, permission-aware knowledge base that answers in plain words and cites the exact document and page.":
-      "A React tool that reads Schedule 14A filings with OpenAI and drafts every ballot item, alongside a dashboard that drafts investigation material and HeyGen videos through Make.com.",
+      "A React tool that reads Schedule 14A filings with OpenAI and drafts every ballot item, alongside a dashboard that drafts investigation material and HeyGen videos through Make.com. In the screenshot is the investigations page that material feeds: a research profile for each company under review, such as Redwire, SoFi, TruGolf, Core Scientific, Super Micro and DoorDash.",
     "9 s|average search;14 yrs|of matters indexed;100%|answers cited;6 h|saved per associate weekly":
       "10 min|per filing;100%|items linked to the filing;2|AI tools shipped;6 h|saved per filing",
     "It is the tool our associates open first every morning.":
@@ -577,7 +644,7 @@ const cases = [
     "Portal enquiries waited hours for a reply; by then buyers had called three other agents.":
       "Analysts copied listing details into a spreadsheet model one property at a time.",
     "A lead agent that replies within a minute, qualifies the buyer, offers viewing slots and writes the CRM record before a person reads it.":
-      "A Python scraper and API pipeline, orchestrated in n8n, that pulls Centris listings, cleans the data and fills the financial model for each property.",
+      "A Python scraper and API pipeline, orchestrated in n8n, that pulls Centris listings, cleans the data and fills the financial model for each property. In the screenshot is the n8n flow that builds each model: it copies the model template in Google Drive, splits the AI output by sheet, appends the general info, financing, residential and commercial rent rolls, capital expenses, costs and qualitative analysis, then posts the finished model to Slack.",
     "40 s|first reply;+27%|viewings booked;100%|leads logged in CRM;24/7|coverage":
       "< 2 min|listing to model;100s|of listings per run;0|manual copy-paste;Daily|automatic refresh",
     "Fast, careful and honest about what AI should not do.": "Always a pleasure to work with and will do it again in the future!",
@@ -685,6 +752,10 @@ export const rules = [
   // ---------- Home: hero ----------
   ["`Automate the work`", "`Build once.`"],
   ["`nobody *wants.*`", "`Automate *everything.*`"],
+
+  // Company name: Automyra SI everywhere (last, so it also catches names written by the rules above)
+  ["Automyra AI", "Automyra SI"],
+  ["automyra ai", "automyra si"],
 ];
 
 // ---------- Server-rendered HTML for list-style content (the scripts render the same on load) ----------
@@ -769,6 +840,8 @@ const ssr = [
 
 export const html = [
   ...ssr,
+  // Screenshots have one size: no srcset, or the server-rendered one sticks when the image changes (e.g. the Services menu)
+  [new RegExp(` srcset="${IMG.replace(/[./]/g, "\\$&")}(?:${Object.keys(SHOTS).join("|")})\\.webp[^"]*"`, "g"), "", "screenshot srcset"],
   // No Framer branding: badge, page comments, generator tag, editor loader, analytics and the template's demo bar
   [/<div id="__framer-badge-container">[\s\S]*?<\/a>(?:<!--\/\$-->)*<\/div>/g, "", "badge html"],
   [/<!-- Made in Framer · framer\.com -->/g, "<!-- Automyra AI · automyra ai agency -->", "made-in comment"],
@@ -782,6 +855,17 @@ export const html = [
   // Logo in the server-rendered header and footer
   [/(<a class="fchd-logo"[^>]*>)<svg[^>]*><path d="M12 1\.5C[^"]*"\/><\/svg>/g, "$1" + logoSvgHtml(22), "header logo"],
   [/(<a class="fco-logo"[^>]*>)<svg class="fco-sp"[^>]*><path d="M12 1\.5C[^"]*"\/><\/svg>/g, "$1" + logoSvgHtml(30), "footer logo"],
+  [/(<a class="(?:fchd|fco)-logo"[^>]*><svg[\s\S]*?<\/svg>)[^<]*<\/a>/g, "$1" + LOGO_NAME + LOGO_SUB_HTML + "</a>", "logo text"],
+  // About story as rendered on the page (the script renders ABOUT_STORY the same way)
+  [/(<p class="fcab-p" style="[^"]*">)Flowcraft started in 2021[^<]*<\/p><p class="fcab-p" style="([^"]*)">So we built a studio[^<]*<\/p>/g,
+    (m, p1, s2) => `${p1}${ABOUT_STORY[0]}</p><p class="fcab-p" style="${s2}">${ABOUT_STORY[1]}</p><p class="fcab-p" style="${s2.replace(/520ms/g, "640ms")}">${ABOUT_STORY[2]}</p>`, "about story"],
+  // Lead-scoring post body as rendered on its page
+  [">The problem was the phone</h2><p>A third of calls rang out at lunch and after five.</p>",
+    ">The problem was the order</h2><p>Reps called leads in the order they arrived, so the best merchants waited while time went to poor fits.</p>"],
+  [">What we built</h2><p>A voice agent that books, moves and confirms appointments in the practice software, in the clinic's own tone.</p>",
+    ">What we built</h2><p>An n8n workflow that enriches each new lead, classifies its industry and revenue with AI, writes a score into Close CRM and sets 15- and 2-minute call reminders.</p>"],
+  [">What happened</h2><p>Bookings rose 38% in two months, and the front desk got eleven hours a week back.</p>",
+    ">What changed</h2><p>Every lead now has a score within minutes, and reps start the day with the best leads at the top.</p>"],
   // Favicon, app icon and social share image
   [/<link href="https:\/\/framerusercontent\.com\/images\/[^"]*" rel="icon" media="\(prefers-color-scheme: light\)">/g,
     '<link rel="icon" href="/brand/favicon.svg" type="image/svg+xml"><link rel="icon" href="/brand/favicon-32.png" sizes="32x32" type="image/png">', "favicon"],

@@ -59,7 +59,7 @@ import{t as e}from"./rolldown-runtime.Bi-D_2cA.mjs";import{A as t,C as n,E as r,
 @media (max-width:699px){.fc-wrap{--pad:20px}}
 :root{--g:56px}@media (max-width:1099px){:root{--g:32px}}@media (max-width:699px){:root{--g:20px}}
 @media (prefers-reduced-motion:reduce){.fc-hd-i{translate:0 0!important} .fc-spark{scale:1!important;rotate:0deg!important;animation:none!important} .fc-um{clip-path:none!important} .fc-um img{scale:1!important;translate:0 0!important}}
-`,De={site:[{slug:`site`,f1:`Automyra AI`,f2:`AI automation studio`,f3:`An AI automation agency that builds the agents, n8n workflows and apps your team runs every day: lead gen, sales ops and back office.`,f4:`hamzaabialal@gmail.com`,f5:`+92 304 7670164`,f6:`Karachi`,f7:`Asia/Karachi`,f8:`https://calendly.com/hamzaabialal/free-ai-automation-discovery-call`,f9:`Upwork:https://www.upwork.com/agencies/2001333416097289203/, YouTube:https://www.youtube.com/@msobansiraj1, WhatsApp:https://wa.me/923047670164`,f10:`Top Rated on Upwork · 100% JSS`,f11:`Karachi, Pakistan`,f12:`Mon–Sat 10:00–22:00 PKT`,f13:`1-6 10:00-22:00`,n1:`1`}],posts:[{slug:`where-to-start-with-ai-automation`,f1:`Where to start with AI automation (it is not the chatbot)`,f2:`Guide`,f3:`7 min`,f4:`The first agent worth building is almost never the one on your homepage. Here is how we pick it on a discovery call.`,f5:`## Start where the hours are
+`,De={site:[{slug:`site`,f1:`Automyra SI`,f2:`AI automation studio`,f3:`An AI automation agency that builds the agents, n8n workflows and apps your team runs every day: lead gen, sales ops and back office.`,f4:`hamzaabialal@gmail.com`,f5:`+92 304 7670164`,f6:`Karachi`,f7:`Asia/Karachi`,f8:`https://calendly.com/hamzaabialal/free-ai-automation-discovery-call`,f9:`Upwork:https://www.upwork.com/agencies/2001333416097289203/, YouTube:https://www.youtube.com/@msobansiraj1, WhatsApp:https://wa.me/923047670164`,f10:`Top Rated on Upwork · 100% JSS`,f11:`Karachi, Pakistan`,f12:`Mon–Sat 10:00–22:00 PKT`,f13:`1-6 10:00-22:00`,n1:`1`}],posts:[{slug:`where-to-start-with-ai-automation`,f1:`Where to start with AI automation (it is not the chatbot)`,f2:`Guide`,f3:`7 min`,f4:`The first agent worth building is almost never the one on your homepage. Here is how we pick it on a discovery call.`,f5:`## Start where the hours are
 
 Most teams want a chatbot first. The hours are usually somewhere quieter: copying data between tools, chasing replies, matching documents.
 
@@ -73,7 +73,11 @@ Multiply the first two and weigh the third. The top of that list is where to sta
 
 ## Keep a person in the loop
 
-The first version of any agent should hand the hard cases to a person, with a draft. Trust comes from the logs, not the demo.`,f6:`Muhammad Soban`,f7:`Sep 12, 2026`,img:`https://framerusercontent.com/images/VDw9kSAfKcII06HWmBCzlXra2w.webp`,n1:`1`},{slug:`lead-scoring-with-n8n`,f1:`How we score every new lead in Close CRM with n8n`,f2:`Case note`,f3:`5 min`,f4:`Enrichment, industry and revenue classification, and a score on every lead before a rep calls.`,f5:`## The problem was the order
+The first version of any agent should hand the hard cases to a person, with a draft. Trust comes from the logs, not the demo.
+
+## About the cover
+
+The cover shows one of those quiet first wins: an n8n workflow that turns incoming tasks into calendar events on its own, with a branch for each type of task, so nobody copies them across by hand.`,f6:`Muhammad Soban`,f7:`Sep 12, 2026`,img:`/assets/work/journal-where-to-start.png`,n1:`1`},{slug:`lead-scoring-with-n8n`,f1:`How we score every new lead in Close CRM with n8n`,f2:`Case note`,f3:`5 min`,f4:`Enrichment, industry and revenue classification, and a score on every lead before a rep calls.`,f5:`## The problem was the order
 
 Reps called leads in the order they arrived, so the best merchants waited while time went to poor fits.
 
@@ -83,7 +87,11 @@ An n8n workflow that enriches each new lead, classifies its industry and revenue
 
 ## What changed
 
-Every lead now has a score within minutes, and reps start the day with the best leads at the top.`,f6:`Hamza B.`,f7:`Aug 28, 2026`,img:`https://framerusercontent.com/images/4Qy54YZKQfoqydh1duQiAZSMhBo.webp`,n1:`2`},{slug:`agents-need-guardrails`,f1:`Agents need guardrails, not just prompts`,f2:`Opinion`,f3:`6 min`,f4:`Hand-over rules, logs and a weekly review are what make an agent safe to leave alone.`,f5:`## Prompts are not policy
+Every lead now has a score within minutes, and reps start the day with the best leads at the top.
+
+## About the cover
+
+The cover shows a sister build in Zapier for project leads: each new lead in Google Sheets is validated, sorted by contact (no email, first or second contact, or early days), emailed through Gmail, analysed with AI by Zapier, logged in Zoho CRM and moved to the archive sheet.`,f6:`Hamza B.`,f7:`Aug 28, 2026`,img:`/assets/work/journal-lead-scoring.jpg`,n1:`2`},{slug:`agents-need-guardrails`,f1:`Agents need guardrails, not just prompts`,f2:`Opinion`,f3:`6 min`,f4:`Hand-over rules, logs and a weekly review are what make an agent safe to leave alone.`,f5:`## Prompts are not policy
 
 A good prompt makes a good demo. Guardrails make a good week.
 
@@ -95,7 +103,11 @@ A good prompt makes a good demo. Guardrails make a good week.
 
 ## The result
 
-Agents that people trust enough to stop checking.`,f6:`Muhammad Soban`,f7:`Aug 9, 2026`,img:`https://framerusercontent.com/images/24R6jbtpYqHNUCW6JkLpsEM4xr0.webp`,n1:`3`}]},Oe=`FcJournalList@cms1`,ke=(e,t=`img`)=>String(e&&e[t]||``).split(`?`)[0],Ae=`data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20400%20500'%20preserveAspectRatio%3D'xMidYMid%20slice'%3E%3Crect%20width%3D'400'%20height%3D'500'%20fill%3D'%23D3D8E2'%2F%3E%3Crect%20x%3D'120'%20y%3D'170'%20width%3D'160'%20height%3D'160'%20rx%3D'8'%20fill%3D'none'%20stroke%3D'%23AEB6C6'%20stroke-width%3D'1.5'%2F%3E%3Crect%20x%3D'100'%20y%3D'150'%20width%3D'200'%20height%3D'200'%20rx%3D'10'%20fill%3D'none'%20stroke%3D'%23C3CAD8'%20stroke-width%3D'1'%20stroke-dasharray%3D'2%206'%2F%3E%3C%2Fsvg%3E`,je=(e,t=`img`)=>ke(e,t)||Ae,Me=a===void 0?m:r,Ne=`
+Agents that people trust enough to stop checking.
+
+## About the cover
+
+The cover is GuardXFlow, an invoice tool we built around this idea. AI reads every invoice, whether a PDF, a Word file or a phone photo, and fills in the supplier, number, date, subtotal and taxes. Nothing reaches the books until a person ticks the box to confirm they have verified the extracted information.`,f6:`Muhammad Soban`,f7:`Aug 9, 2026`,img:`/assets/work/journal-guardrails.png`,n1:`3`}]},Oe=`FcJournalList@cms1`,ke=(e,t=`img`)=>String(e&&e[t]||``).split(`?`)[0],Ae=`data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20400%20500'%20preserveAspectRatio%3D'xMidYMid%20slice'%3E%3Crect%20width%3D'400'%20height%3D'500'%20fill%3D'%23D3D8E2'%2F%3E%3Crect%20x%3D'120'%20y%3D'170'%20width%3D'160'%20height%3D'160'%20rx%3D'8'%20fill%3D'none'%20stroke%3D'%23AEB6C6'%20stroke-width%3D'1.5'%2F%3E%3Crect%20x%3D'100'%20y%3D'150'%20width%3D'200'%20height%3D'200'%20rx%3D'10'%20fill%3D'none'%20stroke%3D'%23C3CAD8'%20stroke-width%3D'1'%20stroke-dasharray%3D'2%206'%2F%3E%3C%2Fsvg%3E`,je=(e,t=`img`)=>ke(e,t)||Ae,Me=a===void 0?m:r,Ne=`
 .fcjl{position:relative;background:var(--fc-bone);color:var(--fc-ink);padding:clamp(60px,7vw,110px) 0 clamp(90px,10vw,150px)}
 .fcjl-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:clamp(30px,4vw,56px)} .fcjl-chips button{padding:11px 16px;border:0;border-radius:999px;background:var(--fc-cloud);color:var(--fc-ink);font:inherit;font-size:12.5px;cursor:pointer;box-shadow:inset 0 0 0 1px var(--fc-fog)} .fcjl-chips button.is-on{background:var(--fc-ink);color:var(--fc-cloud);box-shadow:none}
 .fcjl-empty{font-size:30px;color:var(--fc-mut)}
