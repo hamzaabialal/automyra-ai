@@ -271,6 +271,9 @@ const COVERS = [
 
 // Service slug -> its case study slug
 const SERVICE_CASE = '{"voice-agents":"ai-voice-agent","workflow-automation":"centris","support-agents":"rabbit-funding","knowledge-base":"signal-law-group","custom-ai-apps":"hostyo"}';
+// Services menu cards that are not case studies: AI document processing shows GuardXFlow (written up in the guardrails post)
+const MENU_CARDS =
+  '{"knowledge-base":{slug:"guardxflow",href:"/journal/agents-need-guardrails",f1:"GuardXFlow",f4:"48",f3:"Invoices read by AI, approved by a person",img:"/assets/work/guardxflow-inbox.png"}}';
 
 const sitewide = [
   // Service pages: show the matching case study (the template falls back to the first case)
@@ -281,8 +284,12 @@ const sitewide = [
   // Services menu: the featured case follows the hovered service (the template picks by position)
   [
     "P=ae[ne%Math.max(1,ae.length)]||ae[0]",
-    "P=ae.find(e=>e.slug===" + SERVICE_CASE + "[(ie[ne]||{}).slug])||ae[ne%Math.max(1,ae.length)]||ae[0]",
+    "P=" + MENU_CARDS + "[(ie[ne]||{}).slug]||ae.find(e=>e.slug===" + SERVICE_CASE + "[(ie[ne]||{}).slug])||ae[ne%Math.max(1,ae.length)]||ae[0]",
   ],
+  // Services menu: a card can link somewhere other than a case page
+  ["className:`fchd-feat`,href:`/work/${P.slug}`", "className:`fchd-feat`,href:P.href||`/work/${P.slug}`"],
+  // Services menu: a fresh, eagerly loaded image per card, so the last card's image never lingers while the next loads
+  ["x(`img`,{src:me.src,srcSet:me.srcSet,sizes:`360px`,alt:``,loading:`lazy`,", "x(`img`,{key:me.src,src:me.src,srcSet:me.srcSet,sizes:`360px`,alt:``,loading:`eager`,"],
   // Service pages: keep the "Other services" cards clear of the curved section below
   [".fcsv-others{margin-top:clamp(70px,8vw,120px)}", ".fcsv-others{margin-top:clamp(70px,8vw,120px);padding-bottom:clamp(60px,9vw,140px)}"],
   // FAQ: more room below the chat panel so the curved CTA never covers it
