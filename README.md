@@ -41,7 +41,7 @@ Other:
 Screenshots (`assets/work/`, mapped in `SHOTS` in `content.mjs`) and the text written from them:
 - Each case study's "What we built" ends with a description of its screenshot. The AI Call Desk (Zapier call follow-up)
   and Rabbit Funding (n8n LinkedIn outreach) screenshots may be from other builds: confirm they belong to those cases.
-- Home impact numbers come from the screenshots: 33 Hostyo properties, 48 GuardXFlow invoices, 15 gym plans, 6 gyms.
+- Home impact numbers come from the screenshots: 33 Hostyo properties, 51 GuardXFlow invoices, 15 gym plans, 6 gyms.
 - About: the photo is the gym platform's super-admin, described in the story's last paragraph.
 - Each journal post ends with an "About the cover" section.
 - Screenshots show real client names, emails and amounts; blur them before publishing if needed.

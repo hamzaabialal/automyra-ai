@@ -274,9 +274,10 @@ const COVERS = [
 
 // Service slug -> its case study slug
 const SERVICE_CASE = '{"voice-agents":"ai-voice-agent","workflow-automation":"centris","support-agents":"rabbit-funding","knowledge-base":"signal-law-group","custom-ai-apps":"hostyo"}';
-// Services menu cards that are not case studies: AI document processing shows GuardXFlow (written up in the guardrails post)
+// Services menu cards that are not case studies: AI document processing shows GuardXFlow (written up in the guardrails post),
+// workflow automation shows the Closing Date Watcher n8n workflow
 const MENU_CARDS =
-  '{"knowledge-base":{slug:"guardxflow",href:"/journal/agents-need-guardrails",f1:"GuardXFlow",f4:"48",f3:"Invoices read by AI, approved by a person",img:"/assets/work/guardxflow-inbox.png"}}';
+  '{"knowledge-base":{slug:"guardxflow",href:"/journal/agents-need-guardrails",f1:"GuardXFlow",f4:"51",f3:"Invoices read by AI, approved by a person",img:"/assets/work/guardxflow-inbox.png"},"workflow-automation":{slug:"closing-date-watcher",href:"/services/workflow-automation",f1:"Closing Date Watcher",f4:"24/7",f3:"n8n checks every project closing date, updates the tasks and emails the team",img:"/assets/work/closing-date-watcher.jpg"}}';
 
 const sitewide = [
   // Service pages: show the matching case study (the template falls back to the first case)
@@ -293,6 +294,17 @@ const sitewide = [
   ["className:`fchd-feat`,href:`/work/${P.slug}`", "className:`fchd-feat`,href:P.href||`/work/${P.slug}`"],
   // Services menu: a fresh, eagerly loaded image per card, so the last card's image never lingers while the next loads
   ["x(`img`,{src:me.src,srcSet:me.srcSet,sizes:`360px`,alt:``,loading:`lazy`,", "x(`img`,{key:me.src,src:me.src,srcSet:me.srcSet,sizes:`360px`,alt:``,loading:`eager`,"],
+  // Services menu card: show the whole screenshot in a frame above the text instead of cropping it behind the text
+  [".fchd-feat{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-height:280px;padding:20px;", ".fchd-feat{position:relative;display:flex;flex-direction:column;justify-content:flex-start;gap:6px;min-height:280px;padding:0 0 22px;background:color-mix(in srgb,var(--fc-cloud) 5%,transparent);"],
+  [".fchd-fph{position:absolute;inset:0;z-index:-1}", ".fchd-fph{position:relative;aspect-ratio:16/10;margin-bottom:12px;overflow:hidden;background:#0b0f0e}.fchd-feat>:not(.fchd-fph){padding-inline:20px}"],
+  [".fchd-fph img{width:100%;height:100%;object-fit:cover;", ".fchd-fph img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 0;"],
+  [".fchd-feat:hover .fchd-fph img{scale:1.06}", ".fchd-feat:hover .fchd-fph img{scale:1.05}"],
+  [".fchd-fph::after{content:\"\";", ".fchd-fph::after{display:none;content:\"\";"],
+  [".fchd-feat b{font-size:46px;", ".fchd-feat b{font-size:38px;"],
+  // Work cards: show the screenshots straight, in colour and uncropped by zoom
+  ["object-fit:cover;scale:1.15;filter:grayscale(.55);", "object-fit:cover;object-position:50% 0;scale:1;filter:none;"],
+  [".fcwl-card:hover .fcwl-ph img{scale:1.08;", ".fcwl-card:hover .fcwl-ph img{scale:1.03;"],
+  [".fcwl-ph{position:relative;display:block;aspect-ratio:4/3.2;", ".fcwl-ph{position:relative;display:block;aspect-ratio:16/10;"],
   // Service pages: keep the "Other services" cards clear of the curved section below
   [".fcsv-others{margin-top:clamp(70px,8vw,120px)}", ".fcsv-others{margin-top:clamp(70px,8vw,120px);padding-bottom:clamp(60px,9vw,140px)}"],
   // FAQ: more room below the chat panel so the curved CTA never covers it
@@ -349,7 +361,7 @@ const sitewide = [
 
   // Impact numbers, each read from the dashboard in its screenshot (see SHOTS)
   ["12,000+|tasks our agents run every day|", "33|properties run on the Hostyo owner portal|"],
-  ["94%|of conversations solved without a person|", "48|invoices processed in GuardXFlow's AI inbox|"],
+  ["94%|of conversations solved without a person|", "51|invoices processed in GuardXFlow's AI inbox|"],
   ["31 h|given back to each person, every month|", "15|membership plans live on our gym platform|"],
   ["3 weeks|from the audit to a live agent|", "6|gyms run from one super-admin we built|"],
   ["Numbers from agents in *production.*", "Numbers from systems in *production.*"],
@@ -640,7 +652,7 @@ const cases = [
     "Fourteen years of matters sat in folders only the partners knew how to search.":
       "The team read long SEC proxy filings by hand to pull out each ballot item before any analysis could start.",
     "A private, permission-aware knowledge base that answers in plain words and cites the exact document and page.":
-      "A React tool that reads Schedule 14A filings with OpenAI and drafts every ballot item, alongside a dashboard that drafts investigation material and HeyGen videos through Make.com. In the screenshot is the investigations page that material feeds: a research profile for each company under review, such as Redwire, SoFi, TruGolf, Core Scientific, Super Micro and DoorDash.",
+      "A React tool that reads Schedule 14A filings with OpenAI and drafts every ballot item, alongside a dashboard that drafts investigation material and HeyGen videos through Make.com. In the screenshot is the Signal Ledger on signallawgroup.com: every recommendation is published within 48 hours of the EDGAR filing, timestamped, given a SHA fingerprint so it cannot be quietly changed, and later checked against the vote result the company reports in its 8-K.",
     "9 s|average search;14 yrs|of matters indexed;100%|answers cited;6 h|saved per associate weekly":
       "10 min|per filing;100%|items linked to the filing;2|AI tools shipped;6 h|saved per filing",
     "It is the tool our associates open first every morning.":
