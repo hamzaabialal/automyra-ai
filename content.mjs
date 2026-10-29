@@ -245,10 +245,24 @@ const SHOTS = {
 };
 
 // About page story, one paragraph each; the last one describes the photo beside it
+// About story photo: clicking it steps through these screenshots [src, alt, caption]
+const ABOUT_GALLERY = [
+  ["/assets/work/gym-super-admin.png", "Super-admin of the multi-gym platform we built", "Gym platform super-admin"],
+  ["/assets/work/gym-members.png", "Members page of a gym on our platform", "Gym members"],
+  ["/assets/work/gym-plans.png", "Membership plans on our gym platform", "Gym membership plans"],
+  ["/assets/work/hostyo-finances.png", "Hostyo owner portal finances", "Hostyo owner finances"],
+  ["/assets/work/guardxflow-history.png", "GuardXFlow invoice history", "GuardXFlow invoice history"],
+  ["/assets/work/closing-date-watcher.jpg", "Closing Date Watcher n8n workflow", "n8n Closing Date Watcher"],
+  ["/assets/work/centris.jpg", "n8n flow that builds each Centris financial model", "n8n financial model flow"],
+];
+const aboutCaption = (i) => i + 1 + " / " + ABOUT_GALLERY.length + " · " + ABOUT_GALLERY[i][2] + " · click for next";
+const ABOUT_GALLERY_NEXT =
+  "e=>{let p=e.currentTarget,m=p.querySelector(`img`),c=p.querySelector(`.fcab-cap`),L=" + JSON.stringify(ABOUT_GALLERY.map((g, i) => [g[0], g[1], aboutCaption(i)])) +
+  ",n=((+p.dataset.n||0)+1)%L.length;p.dataset.n=n;m.style.opacity=0;setTimeout(()=>{m.onload=()=>{m.style.opacity=1};m.src=L[n][0];m.alt=L[n][1];c.textContent=L[n][2]},200)}";
 const ABOUT_STORY = [
   "Automyra AI started in 2025 in Karachi, when a small team of developers who had been building AI agents and n8n workflows for clients on Upwork decided to work as one studio.",
   "We start with the work, not the model: we learn how your team does it today, find the hours, then build the agents, workflows and apps that take them back — with the logs and hand-over rules an operations lead would demand.",
-  "In the photo: the super-admin of a multi-gym platform we built and run. Every gym, its owners, Stripe account and status sit in one place, and each gym gets its own panel for members, plans, classes, programming and magic links.",
+  "In the photos (click to see the next one): screens from systems we built and still run. First up is the super-admin of our multi-gym platform. Every gym, its owners, Stripe account and status sit in one place, and each gym gets its own panel for members, plans, classes, programming and magic links.",
 ];
 
 // Journal posts: an "About the cover" section after the body's last line, describing the screenshot used as the cover.
@@ -301,6 +315,16 @@ const sitewide = [
   [".fchd-feat:hover .fchd-fph img{scale:1.06}", ".fchd-feat:hover .fchd-fph img{scale:1.05}"],
   [".fchd-fph::after{content:\"\";", ".fchd-fph::after{display:none;content:\"\";"],
   [".fchd-feat b{font-size:46px;", ".fchd-feat b{font-size:38px;"],
+  // About story: the gym super-admin screenshot is wide, so the frame takes its shape and shows all of it
+  [".fcab-ph{position:relative;aspect-ratio:4/5;", ".fcab-ph{position:relative;align-self:center;aspect-ratio:1875/885;"],
+  [".fcab-ph{aspect-ratio:4/3.6}", ".fcab-ph{aspect-ratio:1875/885}"],
+  [".fcab-ph{clip-path:inset(0 0 0 0 round 36px);border-radius:36px}", ".fcab-ph{clip-path:inset(0 0 0 0 round 18px);border-radius:18px}"],
+  [".fcab-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;scale:1.2;transition:", ".fcab-ph{cursor:pointer;background:#14181f}.fcab-cap{position:absolute;right:12px;bottom:12px;z-index:1;padding:6px 12px;border-radius:999px;background:rgba(10,14,13,.78);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#f2f1ec;font-size:12px;letter-spacing:.02em;pointer-events:none}.fcab-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;scale:1;transition:opacity .2s,"],
+  // Home impact slides: a plain rounded frame shaped like the screenshots, so each one shows in full
+  [".fci-cut{position:relative;aspect-ratio:4/4.4;max-height:72vh;margin-left:auto;", ".fci-cut{position:relative;aspect-ratio:2.15/1;max-height:72vh;margin-left:auto;clip-path:inset(0 round 20px)!important;-webkit-clip-path:inset(0 round 20px)!important;overflow:hidden;background:transparent!important;"],
+  [".fci-tag{position:absolute;z-index:3;left:-18px;top:14%;", ".fci-tag{position:absolute;z-index:3;left:-88px;top:0;"],
+  [".fci-cut{aspect-ratio:16/11;max-height:34vh;width:100%}", ".fci-cut{aspect-ratio:2.15/1;max-height:none;width:100%}"],
+  [".fci-cut img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(100% 0 0 0);scale:1.2;", ".fci-cut img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;clip-path:inset(100% 0 0 0);scale:1;"],
   // Work cards: show the screenshots straight, in colour and uncropped by zoom
   ["object-fit:cover;scale:1.15;filter:grayscale(.55);", "object-fit:cover;object-position:50% 0;scale:1;filter:none;"],
   [".fcwl-card:hover .fcwl-ph img{scale:1.08;", ".fcwl-card:hover .fcwl-ph img{scale:1.03;"],
@@ -452,6 +476,12 @@ const sitewide = [
   ["2021|founded in New York;60+|agents in production;31 h|saved per person, monthly;12|people, all builders",
     "2025|founded in Karachi;37+|systems shipped;1,595 h|delivered on Upwork;5|people, all builders"],
   ["The Flowcraft team at work", "Super-admin of the multi-gym platform we built"],
+  // Story photo: a click (or Enter) shows the next screenshot of our builds
+  [
+    "d(`div`,{className:`fcab-ph`,children:d(`img`,{src:k.src,srcSet:k.srcSet,sizes:x?`90vw`:`45vw`,alt:`Super-admin of the multi-gym platform we built`,loading:`lazy`,decoding:`async`})})",
+    "u(`div`,{className:`fcab-ph`,role:`button`,tabIndex:0,title:`Click for the next screenshot`,onClick:" + ABOUT_GALLERY_NEXT + ",onKeyDown:e=>{e.key===`Enter`&&e.currentTarget.click()},children:[d(`img`,{src:k.src,sizes:x?`90vw`:`45vw`,alt:`Super-admin of the multi-gym platform we built`,loading:`lazy`,decoding:`async`}),d(`span`,{className:`fcab-cap`,children:`" + aboutCaption(0) + "`})]})",
+  ],
+  [/(<div class="fcab-ph")(><img [^>]*>)(<\/div>)/g, '$1 role="button" tabindex="0" title="Click for the next screenshot"$2<span class="fcab-cap">' + aboutCaption(0) + "</span>$3"],
 
   // Services page
   ["60+|agents live;94%|solved without a person;3 wks|to launch", "37+|systems shipped;100%|Job Success;1–4 wks|to launch"],
