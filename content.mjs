@@ -665,7 +665,7 @@ const cases = [
     "Order questions, returns and delivery changes filled the help desk; replies took six hours at peak.":
       "Owner updates lived in spreadsheets and email threads, and the team spent hours every week answering the same owner questions.",
     "A support agent on chat and email that answers from Shopify and the shipping policy, processes returns and escalates with a drafted reply.":
-      "A React owner portal on Vercel with Notion as the data layer: properties, bookings and statements, with each owner seeing only their own. In the screenshot is the home dashboard: balance on hold, payouts and expenses this month, the forecast from upcoming reservations, and guests in house and next arrivals from Airbnb and Booking.com. Behind it sit reservations with gross, deductions and payout per booking, monthly management-fee reports, and user admin with owner invites and impersonation.",
+      "A React owner portal on Vercel, with Notion as the data layer. Each owner sees only their own properties, bookings and statements. In the screenshot is the home dashboard: balance, payouts, expenses, the forecast and next arrivals from Airbnb and Booking.com.",
     "71%|tickets solved by AI;38 s|first reply;+9 pts|CSAT;3x|tickets per person":
       "4 wks|kickoff to live;24/7|owner self-service;1|portal for every owner;5.0★|client rating",
     "71% of our tickets close without a person, and CSAT went up.": "Perfect work, highly recommended for custom coding solutions!",
@@ -710,7 +710,31 @@ const cases = [
   }),
 ].flat();
 
+// Case pages: an extra "03" chapter, per case slug [label, text]
+const CASE_EXTRA = {
+  hostyo: [
+    "Hostyo CRM",
+    "We also built and maintain a custom CRM for Hostyo, a short-term rental property management company in Cyprus. It brings their entire sales process into one place: Facebook ad leads flow in automatically, agents call owners directly from the CRM, and every call is recorded, transcribed in Greek or English, and summarised by AI. The team can message owners on WhatsApp, book meetings synced with Google Calendar, send contracts for e-signature in English and Greek, and chat internally with mobile notifications. Automated workflows and health alerts keep everything running smoothly, so Hostyo's team spends less time on admin and more time signing new properties.",
+  ],
+  "signal-law-group": [
+    "Research automation",
+    "We also automated the firm's research and publishing on Make.com. A company name goes in, and GPT with live web search researches it, scores the risk and produces a full investigation: article, press release, cover image, PDF and a 60-second AI news-anchor video. Once approved, it is published on WordPress and sent to 226 publisher outlets. Every 12 hours the system checks SEC EDGAR for new proxy statements and drafts a voting recommendation that an analyst reviews within 48 hours. The team now covers far more companies, never misses a filing, and nothing goes public without a person signing off.",
+  ],
+};
+// Server-rendered HTML of the extra chapter, inserted after the case's "What we built" block
+const caseExtraHtml = (slug) =>
+  '$1<div class="fccs-ch"><p class="fccs-lab" style="' + CASE_LAB_STYLE + '"><em>03</em>' + CASE_EXTRA[slug][0].replace(/&/g, "&amp;") +
+  "</p><p class=\"fccs-txt\" style=\"font-family:var(--fc-font-d, 'Geist'), Inter, -apple-system, Arial, sans-serif;font-weight:var(--fc-font-dw, 500);font-style:normal\">" +
+  CASE_EXTRA[slug][1].replace(/&/g, "&amp;").replace(/'/g, "&#x27;") + "</p></div>";
+const CASE_LAB_STYLE = "font-family:var(--fc-font-m, 'IBM Plex Mono'), ui-monospace, SFMono-Regular, Menlo, monospace;font-weight:var(--fc-font-mw, 400)";
+
 export const rules = [
+  // Case pages: render the extra chapter from CASE_EXTRA
+  [
+    "d(`dd`,{children:d(`span`,{children:E.f13})})]})]})]})]}),",
+    "d(`dd`,{children:d(`span`,{children:E.f13})})]})]})]})]})," +
+      "(" + JSON.stringify(CASE_EXTRA) + ")[E.slug]&&u(`div`,{className:`fccs-ch`,children:[u(`p`,{className:`fccs-lab`,style:y,children:[d(`em`,{children:`03`}),(" + JSON.stringify(CASE_EXTRA) + ")[E.slug][0]]}),d(`p`,{className:`fccs-txt`,style:_,children:(" + JSON.stringify(CASE_EXTRA) + ")[E.slug][1]})]}),",
+  ],
   ...sitewide,
 
   // ---------- Home: process ----------
@@ -897,6 +921,9 @@ const ssr = [
 
 export const html = [
   ...ssr,
+  // Case pages: the extra chapter in the server-rendered HTML too (matched by each case's original "What we built" text)
+  [/(A support agent on chat and email that answers from Shopify[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("hostyo"), "hostyo extra chapter"],
+  [/(A private, permission-aware knowledge base that answers in plain words[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("signal-law-group"), "signal extra chapter"],
   // Screenshots have one size: no srcset, or the server-rendered one sticks when the image changes (e.g. the Services menu)
   [new RegExp(` srcset="${IMG.replace(/[./]/g, "\\$&")}(?:${Object.keys(SHOTS).join("|")})\\.webp[^"]*"`, "g"), "", "screenshot srcset"],
   // No Framer branding: badge, page comments, generator tag, editor loader, analytics and the template's demo bar
