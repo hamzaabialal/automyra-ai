@@ -1,6 +1,6 @@
 // Rebuilds the site from _original/ with the rules in content.mjs. Run: node apply.mjs
 import { readdirSync, readFileSync, writeFileSync, statSync, mkdirSync, rmSync } from "node:fs";
-import { join, relative, dirname } from "node:path";
+import { join, relative, dirname, posix } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
@@ -49,6 +49,12 @@ for (const src of files(original)) {
   const target = out.replace(/^_framer\//, "_app/").replace(/^_app\/framer\./, "_app/runtime.");
   // The old booking page now forwards to Calendly
   if (/^book[a-z0-9]*\.html$/.test(rel)) text = text.replace("<head>", `<head><meta http-equiv="refresh" content="0;url=${booking}">`);
+  // Clean URLs: relative links like "../work.html" become "/work" (the host serves work.html at /work)
+  if (isHtml)
+    text = text.replace(/(href|content)="([a-z0-9./-]*?)\.html(#[^"]*)?"/g, (m, attr, p, hash = "") => {
+      const abs = posix.join("/", posix.dirname(target), p).replace(/(^|\/)index$/, "/").replace(/(.)\/$/, "$1");
+      return `${attr}="${abs}${hash}"`;
+    });
   mkdirSync(dirname(join(root, target)), { recursive: true });
   writeFileSync(join(root, target), text);
 }
