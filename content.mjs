@@ -814,16 +814,39 @@ const toolPillHtml = (inner) =>
     return k ? '<span class="has-ic"><img src="/assets/tools/' + k + '.svg" alt="" width="16" height="16">' + n + "</span>" : m;
   });
 
-// Home: a live workflow demo above the tool strip. Each step lights up in turn (CSS only), then the run starts again.
-// [tool logo, step, detail]
-const FLOW_STEPS = [
-  ["gmail", "Email arrives", "Invoice from a supplier"],
-  ["openai", "AI reads it", "Supplier, amount, due date"],
-  ["zoho", "CRM updated", "Deal and contact saved"],
-  ["googlesheets", "Logged", "Row added to the tracker"],
-  ["slack", "Team alerted", "#finance, with a summary"],
+// Home: live workflow demos above the tool strip. The workflows take turns (one run each); in a run each step lights up
+// in turn. CSS only. [tab name, [tool logo, step, detail] x5]
+const FLOWS = [
+  ["Invoices", [
+    ["gmail", "Email arrives", "Invoice from a supplier"],
+    ["openai", "AI reads it", "Supplier, amount, due date"],
+    ["zoho", "CRM updated", "Deal and contact saved"],
+    ["googlesheets", "Logged", "Row added to the tracker"],
+    ["slack", "Team alerted", "#finance, with a summary"],
+  ]],
+  ["Leads & calls", [
+    ["hubspot", "New lead", "Form filled on the website"],
+    ["openai", "AI scores it", "Fit, budget and urgency"],
+    ["twilio", "AI calls the lead", "Qualifies in a natural voice"],
+    ["zoho", "CRM updated", "Call notes and next step"],
+    ["whatsapp", "Follow-up sent", "WhatsApp with a booking link"],
+  ]],
+  ["Customer support", [
+    ["shopify", "Customer asks", "Where is my order?"],
+    ["openai", "AI finds the answer", "From the order and the policy"],
+    ["gmail", "Reply sent", "In under a minute"],
+    ["airtable", "Ticket logged", "Tagged and closed"],
+    ["slack", "Hard ones escalated", "A person gets a draft"],
+  ]],
+  ["Payments", [
+    ["stripe", "Payment received", "New subscription in Stripe"],
+    ["quickbooks", "Invoice booked", "Matched in QuickBooks"],
+    ["googlesheets", "Revenue updated", "Monthly sheet, live"],
+    ["gmail", "Receipt emailed", "Branded, to the customer"],
+    ["slack", "Team notified", "#sales gets the win"],
+  ]],
 ];
-const FLOW_CYCLE = 8; // seconds per run
+const FLOW_CYCLE = 8; // seconds per run; the workflows take turns, so the full loop is FLOWS.length runs
 // A small element tree rendered both as HTML and as the bundle's jsx calls: [tag, class, children, attributes]
 const flowTree = () => {
   const step = ([k, t, s], i) => [
@@ -834,18 +857,22 @@ const flowTree = () => {
       ["i", "amw-ok", ["✓"], { "aria-hidden": true }],
     ],
   ];
-  const kids = [];
-  FLOW_STEPS.forEach((s, i) => {
-    if (i) kids.push(["span", "amw-c amw-c" + (i - 1), [["i", "", []]], { "aria-hidden": true }]);
-    kids.push(step(s, i));
-  });
+  const flow = ([name, steps], f) => {
+    const kids = [];
+    steps.forEach((s, i) => {
+      if (i) kids.push(["span", "amw-c amw-c" + (i - 1), [["i", "", []]], { "aria-hidden": true }]);
+      kids.push(step(s, i));
+    });
+    return ["div", "amw-flow amw-f" + f, kids, { role: "img", "aria-label": name + " workflow: " + steps.map((s) => s[1]).join(", then ") }];
+  };
   return ["div", "amw", [
     ["div", "amw-hd", [
-      ["p", "amw-eb", ["Live workflow"]],
-      ["h3", "", ["One email in. Everything else runs on its own."]],
+      ["p", "amw-eb", ["Live workflows"]],
+      ["h3", "", ["Your busywork, running on its own."]],
       ["p", "amw-run", [["i", "", [], { "aria-hidden": true }], "Every run in about 4 seconds"]],
     ]],
-    ["div", "amw-flow", kids, { role: "img", "aria-label": "Workflow: " + FLOW_STEPS.map((s) => s[1]).join(", then ") }],
+    ["div", "amw-tabs", FLOWS.map(([name], f) => ["span", "amw-t amw-t" + f, [name]]), { "aria-hidden": true }],
+    ["div", "amw-stack", FLOWS.map(flow)],
   ]];
 };
 const flowHtml = ([tag, cls, kids, attrs = {}] = flowTree()) => {
@@ -862,8 +889,18 @@ const flowJs = (u, d, [tag, cls, kids, attrs = {}] = flowTree()) => {
 };
 // Keyframes per step: each one waits, lights up, stays done, and all reset just before the next run
 const flowCss = () => {
-  const n = FLOW_STEPS.length, at = (i) => 6 + i * 16;
-  let css = "";
+  const n = FLOWS[0][1].length, at = (i) => 6 + i * 16;
+  // Turns: workflow f shows (and its tab lights) for the f-th run of the loop; every run starts at a step cycle's 0%
+  const runs = FLOWS.length, loop = runs * FLOW_CYCLE;
+  let css = FLOWS.map((x, f) => {
+    const a = (f * 100) / runs, b = ((f + 1) * 100) / runs;
+    return "@keyframes amw-f" + f + "{" + (f ? "0%," + (a - 0.01).toFixed(2) + "%{opacity:0;visibility:hidden}" : "") +
+      a.toFixed(2) + "%," + (b - 0.01).toFixed(2) + "%{opacity:1;visibility:visible}" + (b < 100 ? b.toFixed(2) + "%,100%{opacity:0;visibility:hidden}" : "") + "}" +
+      "@keyframes amw-t" + f + "{" + (f ? "0%," + (a - 0.01).toFixed(2) + "%{color:var(--fc-mut);border-color:var(--amw-line);background:transparent}" : "") +
+      a.toFixed(2) + "%," + (b - 0.01).toFixed(2) + "%{color:var(--fc-cloud,#fff);border-color:var(--fc-brass);background:color-mix(in srgb,var(--fc-brass) 14%,transparent)}" +
+      (b < 100 ? b.toFixed(2) + "%,100%{color:var(--fc-mut);border-color:var(--amw-line);background:transparent}" : "") + "}" +
+      ".amw-f" + f + "{animation:amw-f" + f + " " + loop + "s step-end infinite}.amw-t" + f + "{animation:amw-t" + f + " " + loop + "s step-end infinite}";
+  }).join("");
   for (let i = 0; i < n; i++) {
     const s = at(i);
     css += "@keyframes amw-n" + i + "{0%," + (s - 0.1) + "%,97%,100%{opacity:.42;border-color:var(--amw-line);box-shadow:none;transform:none}" +
@@ -883,6 +920,9 @@ const flowCss = () => {
     ".amw-run{display:inline-flex;align-items:center;gap:10px;margin:0;font:500 13px/1 'IBM Plex Mono',ui-monospace,monospace;color:var(--fc-mut)}" +
     ".amw-run i{width:8px;height:8px;border-radius:50%;background:var(--fc-brass);box-shadow:0 0 10px var(--fc-brass);animation:amw-pulse 1.6s ease-in-out infinite}" +
     "@keyframes amw-pulse{50%{opacity:.35}}" +
+    ".amw-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}.amw-t{padding:8px 14px;border:1px solid var(--amw-line);border-radius:999px;" +
+    "font:500 12px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--fc-mut)}" +
+    ".amw-stack{display:grid}.amw-stack>.amw-flow{grid-area:1/1}" +
     ".amw-flow{display:flex;align-items:stretch;padding:28px;border:1px solid var(--amw-line);border-radius:28px;" +
     "background:radial-gradient(color-mix(in srgb,var(--fc-cloud,#fff) 9%,transparent) 1px,transparent 1px) 0 0/22px 22px,color-mix(in srgb,var(--fc-cloud,#fff) 3%,transparent)}" +
     ".amw-n{position:relative;flex:1;display:flex;flex-direction:column;gap:6px;padding:18px 16px;border:1px solid var(--amw-line);border-radius:18px;" +
@@ -893,7 +933,8 @@ const flowCss = () => {
     ".amw-c{position:relative;flex:0 0 clamp(18px,2.4vw,40px);align-self:center;height:2px;background:var(--amw-line)}" +
     ".amw-c i{position:absolute;top:50%;left:0;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:var(--fc-brass);box-shadow:0 0 12px var(--fc-brass);opacity:0}" +
     "@media (max-width:809.98px){.amw-flow{flex-direction:column;padding:14px}.amw-n{display:grid;grid-template-columns:42px 1fr;column-gap:14px;row-gap:2px;align-items:center;padding:12px 14px}.amw-ic{grid-row:span 2;margin:0}.amw-n b{align-self:end}.amw-n small{align-self:start}.amw-c{flex-basis:22px;width:2px;height:auto;align-self:center}.amw-c i{display:none}}" +
-    "@media (prefers-reduced-motion:reduce){.amw *{animation:none!important}.amw-n{opacity:1!important}.amw-ok{opacity:1!important}}";
+    "@media (prefers-reduced-motion:reduce){.amw *{animation:none!important}.amw-n{opacity:1!important}.amw-ok{opacity:1!important}" +
+    ".amw-stack>.amw-flow:not(.amw-f0){visibility:hidden}.amw-t0{color:var(--fc-cloud,#fff);border-color:var(--fc-brass)}}";
 };
 
 // Features, each switched on for the live site or kept for localhost only. ALL_FEATURES=1 node apply.mjs builds them all
