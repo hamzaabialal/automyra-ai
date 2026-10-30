@@ -1261,8 +1261,27 @@ const flowTree = () => {
       ["p", "amw-run", [["i", "", [], { "aria-hidden": true }], "Every run in about 4 seconds"]],
     ]],
     ["div", "amw-tabs", FLOWS.map(([name], f) => ["span", "amw-t amw-t" + f, [name]]), { "aria-hidden": true }],
-    ["div", "amw-stack", FLOWS.map(flow)],
+    ["div", "amw-stack", [...FLOWS.map(flow), ...(FEATURES.sparkle ? [["span", "amw-sp", Array.from({ length: SPARKS }, () => ["i", "", []]), { "aria-hidden": true }]] : [])]],
   ]];
+};
+// Sparkles that circle the workflow board, each on its own track just outside (or inside) the board's edge
+const SPARKS = 96;
+const sparkCss = () => {
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+  const colors = ["var(--fc-brass)", "var(--fc-brass)", "#7ff5d0", "#5cc8ff", "#ffffff"];
+  let css = ".amw-stack{position:relative}.amw-flow{position:relative;z-index:1}" +
+    ".amw-sp{position:absolute;inset:0;pointer-events:none;z-index:0}.amw-sp i{position:absolute;top:0;left:0;border-radius:50%;opacity:0}" +
+    "@keyframes amw-orb{to{offset-distance:100%}}@keyframes amw-tw{0%,100%{opacity:.15}50%{opacity:1}}";
+  for (let k = 0; k < SPARKS; k++) {
+    const big = k % 8 === 0, d = big ? Math.round(-22 + rnd() * 16) : Math.round(-6 - 30 * rnd() * rnd()), size = big ? (9 + rnd() * 5).toFixed(1) : (1.8 + rnd() * 2.6).toFixed(1);
+    const speed = Math.round(big ? 26 : 18 + rnd() * 30), c = big ? "var(--fc-brass)" : colors[Math.floor(rnd() * colors.length)];
+    const dir = k % 3 === 2 ? " reverse" : "", tw = (1.2 + rnd() * 2.4).toFixed(1);
+    css += ".amw-sp i:nth-child(" + (k + 1) + "){width:" + size + "px;height:" + size + "px;background:" + c + ";box-shadow:0 0 " + (big ? 0 : 8) + "px " + c + (big ? ";clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);filter:drop-shadow(0 0 6px " + c + ")" : "") +
+      ";offset-path:inset(" + d + "px round " + (28 - d) + "px);offset-rotate:0deg;animation:amw-orb " + speed + "s linear -" + (rnd() * speed).toFixed(1) + "s infinite" + dir +
+      ",amw-tw " + tw + "s ease-in-out -" + (rnd() * 3).toFixed(1) + "s infinite}";
+  }
+  return "@supports (offset-path:inset(0 round 1px)){" + css + "}@media (prefers-reduced-motion:reduce){.amw-sp{display:none}}";
 };
 const flowHtml = ([tag, cls, kids, attrs = {}] = flowTree()) => {
   const a = (cls ? ' class="' + cls + '"' : "") + Object.entries(attrs).map(([k, v]) => " " + k + '="' + v + '"').join("");
@@ -1328,8 +1347,10 @@ const flowCss = () => {
 
 // Features, each switched on for the live site or kept for localhost only. ALL_FEATURES=1 node apply.mjs builds them all
 // (to preview). strip: moving tool-logo strip on the home page; pills: tool logos in case and service pills;
-// flow: live workflow demo on the home page; theme: dark/light button (dark by default when on).
-const FEATURES = process.env.ALL_FEATURES ? { strip: true, pills: true, flow: true, theme: true } : { strip: false, pills: false, flow: true, theme: false };
+// flow: live workflow demo on the home page; theme: dark/light button (dark by default when on);
+// sparkle: sparkles circling the workflow demo.
+const FEATURES = process.env.ALL_FEATURES ? { strip: true, pills: true, flow: true, theme: true, sparkle: true }
+  : { strip: false, pills: false, flow: true, theme: false, sparkle: true };
 
 // Styles for the extras, added to every page's <head>
 const STRIP_CSS =
@@ -1372,7 +1393,7 @@ const FAQ_CSS =
   ".fcf .fcf-chat{height:min(860px,92vh)}.fcf .fcf-chips{max-height:46%;overflow-y:auto;flex-shrink:0}" +
   "section.fcf.is-ph .fcf-chat{height:min(700px,88vh)}section.fcf.is-ph .fcf-chips{max-height:232px}";
 const EXTRA_HEAD =
-  "<style>" + ARTICLE_CSS + FAQ_CSS + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
+  "<style>" + ARTICLE_CSS + FAQ_CSS + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() + (FEATURES.sparkle ? sparkCss() : "") : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
   (FEATURES.theme ? "<script>try{var t=localStorage.getItem('am-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script>" : "");
 const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M1.5 12H4M20 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>';
