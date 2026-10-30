@@ -735,6 +735,10 @@ const CASE_EXTRA = {
     "Lead generation & sales pipeline",
     "We also automated the rest of Rabbit Funding's sales pipeline, end to end, on n8n with Apify, LinkedIn, OpenAI, Close CRM, Jotform and Zoho Sign. Apify researches prospects on LinkedIn and extracts their data, OpenAI studies each prospect and writes a personal outreach message, and every lead is created and kept in sync in Close CRM. Applications come in through Jotform, and the documents are generated and sent for e-signature in Zoho Sign. APIs and webhooks connect it all, so the path from finding a prospect to a signed document runs without manual work.",
   ],
+  centris: [
+    "AI document processing",
+    "We also built an AI document workflow in n8n that reads email attachments of every kind. It detects each attachment, sorts it by MIME type and sends PDFs, images and Word files down the pipeline that suits them. AI reads each document in context and pulls out the details that matter (key fields, dates, names, amounts and references), and anyone can ask a question about an uploaded document and get the answer from it. Each attachment gets its own Google Sheet with the extracted data, so unstructured attachments become structured, searchable information without manual review or data entry.",
+  ],
   "signal-law-group": [
     "Research automation",
     "We also automated the firm's research and publishing on Make.com. A company name goes in, and GPT with live web search researches it, scores the risk and produces a full investigation: article, press release, cover image, PDF and a 60-second AI news-anchor video. Once approved, it is published on WordPress and sent to 226 publisher outlets. Every 12 hours the system checks SEC EDGAR for new proxy statements and drafts a voting recommendation that an analyst reviews within 48 hours. The team now covers far more companies, never misses a filing, and nothing goes public without a person signing off.",
@@ -1015,6 +1019,7 @@ export const html = [
   // Case pages: the extra chapter in the server-rendered HTML too (matched by each case's original "What we built" text)
   [/(A support agent on chat and email that answers from Shopify[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("hostyo"), "hostyo extra chapter"],
   [/(In production<!-- --> · <!-- -->Ledgerly<\/span>[\s\S]*?<\/a><\/div><\/div>)(?=<div class="fcsv-others">)/g, "$1" + serviceExtraHtml(), "workflow extra section"],
+  [/(A lead agent that replies within a minute, qualifies the buyer[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("centris"), "centris extra chapter"],
   [/(An invoice agent that reads every document, matches it to purchase orders[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("rabbit-funding"), "rabbit extra chapter"],
   [/(A private, permission-aware knowledge base that answers in plain words[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("signal-law-group"), "signal extra chapter"],
   // Screenshots have one size: no srcset, or the server-rendered one sticks when the image changes (e.g. the Services menu)
