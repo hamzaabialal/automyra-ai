@@ -1244,12 +1244,13 @@ const flowTree = () => {
       ["b", "", [t]],
       ["small", "", [s]],
       ["i", "amw-ok", ["✓"], { "aria-hidden": true }],
+      ...(FEATURES.burst ? [["span", "amw-bu", Array.from({ length: BURST }, () => ["i", "", []]), { "aria-hidden": true }]] : []),
     ],
   ];
   const flow = ([name, steps], f) => {
     const kids = [];
     steps.forEach((s, i) => {
-      if (i) kids.push(["span", "amw-c amw-c" + (i - 1), [["i", "", []]], { "aria-hidden": true }]);
+      if (i) kids.push(["span", "amw-c amw-c" + (i - 1), [["i", "", []], ...(FEATURES.burst ? Array.from({ length: TRAIL }, () => ["u", "", []]) : [])], { "aria-hidden": true }]);
       kids.push(step(s, i));
     });
     return ["div", "amw-flow amw-f" + f, kids, { role: "img", "aria-label": name + " workflow: " + steps.map((s) => s[1]).join(", then ") }];
@@ -1261,9 +1262,66 @@ const flowTree = () => {
       ["p", "amw-run", [["i", "", [], { "aria-hidden": true }], "Every run in about 4 seconds"]],
     ]],
     ["div", "amw-tabs", FLOWS.map(([name], f) => ["span", "amw-t amw-t" + f, [name]]), { "aria-hidden": true }],
-    ["div", "amw-stack", [...FLOWS.map(flow), ...(FEATURES.sparkle ? [["span", "amw-sp", Array.from({ length: SPARKS }, () => ["i", "", []]), { "aria-hidden": true }]] : [])]],
+    ["div", "amw-stack", [...FLOWS.map(flow), ...(FEATURES.sparkle ? [["span", "amw-sp", Array.from({ length: SPARKS }, () => ["i", "", []]), { "aria-hidden": true }]] : []),
+      ...(FEATURES.ember ? [["span", "amw-em", Array.from({ length: EMBERS }, () => ["i", "", []]), { "aria-hidden": true }]] : [])]],
   ]];
 };
+// Each step bursts into sparkles as its check mark lands, and a trail of particles carries the data along each line
+const BURST = 16, TRAIL = 6;
+const burstCss = () => {
+  const n = FLOWS[0][1].length, at = (i) => 6 + i * 16;
+  const colors = ["var(--fc-brass)", "#7ff5d0", "#5cc8ff", "#ffffff"];
+  let css = Array.from({ length: n }, (_, i) => ".amw-n" + i + "{z-index:" + (n - i) + "}").join("") + ".amw-bu{position:absolute;top:23px;right:23px;width:0;height:0;pointer-events:none}" +
+    ".amw-bu i{position:absolute;left:-3px;top:-3px;width:6px;height:6px;border-radius:50%;opacity:0}" +
+    ".amw-c::after{content:\"\";position:absolute;inset:0;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,color-mix(in srgb,var(--fc-brass) 20%,transparent),var(--fc-brass));box-shadow:0 0 10px color-mix(in srgb,var(--fc-brass) 60%,transparent)}" +
+    ".amw-c i{z-index:1}.amw-c u{position:absolute;top:50%;left:0;border-radius:50%;opacity:0;pointer-events:none}";
+  for (let k = 0; k < BURST; k++) {
+    const a = (k / BURST) * Math.PI * 2 + (k % 2 ? 0.25 : 0), r = k % 3 ? 48 : 74, c = colors[k % colors.length], star = k % 4 === 0;
+    css += ".amw-bu i:nth-child(" + (k + 1) + "){--x:" + Math.round(Math.cos(a) * r) + "px;--y:" + Math.round(Math.sin(a) * r) + "px;background:" + c + ";box-shadow:0 0 8px " + c +
+      (star ? ";width:13px;height:13px;left:-6.5px;top:-6.5px;border-radius:0;box-shadow:none;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)" : "") + "}";
+  }
+  for (let k = 0; k < TRAIL; k++) {
+    const size = (7 - k * 0.9).toFixed(1), dy = [0, -3, 3, -1, 2, -2][k];
+    css += ".amw-c u:nth-child(" + (k + 2) + "){width:" + size + "px;height:" + size + "px;margin:" + (dy - size / 2) + "px 0 0 " + -size / 2 + "px;background:" + colors[k % colors.length] +
+      ";box-shadow:0 0 8px " + colors[k % colors.length] + ";animation-delay:" + ((k + 1) * 0.06).toFixed(2) + "s}";
+  }
+  for (let i = 0; i < n; i++) {
+    const s = at(i);
+    css += "@keyframes amw-bu" + i + "{0%," + (s + 11.5) + "%{opacity:0;transform:none}" + (s + 12.5) + "%{opacity:1;transform:translate(calc(var(--x)*.35),calc(var(--y)*.35))}" +
+      (s + 26) + "%,100%{opacity:0;transform:translate(var(--x),var(--y)) scale(.3)}}.amw-n" + i + " .amw-bu i{animation:amw-bu" + i + " " + FLOW_CYCLE + "s ease-out infinite}";
+    if (i < n - 1)
+      css += "@keyframes amw-cf" + i + "{0%," + (s + 10) + "%{transform:scaleX(0);opacity:1}" + (at(i + 1) - 0.5) + "%,94%{transform:scaleX(1);opacity:1}98%,100%{transform:scaleX(1);opacity:0}}" +
+        ".amw-c" + i + "::after{animation:amw-cf" + i + " " + FLOW_CYCLE + "s linear infinite}.amw-c" + i + " u{animation-name:amw-c" + i + ";animation-duration:" + FLOW_CYCLE + "s;animation-iteration-count:infinite}";
+  }
+  return css + "@media (max-width:809.98px){.amw-c u,.amw-c::after{display:none}}@media (prefers-reduced-motion:reduce){.amw-bu,.amw-c u,.amw-c::after{display:none}}";
+};
+// Embers: glowing specks that rise slowly from under the board and fade out, like sparks from a fire
+const EMBERS = 42;
+const emberCss = () => {
+  let seed = 3;
+  const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+  const colors = ["var(--fc-brass)", "var(--fc-brass)", "#7ff5d0", "#5cc8ff", "#ffffff"];
+  let css = ".amw-stack{position:relative}.amw-flow{position:relative;z-index:1}.amw-em{position:absolute;inset:0;pointer-events:none;z-index:0}" +
+    ".amw-em i{position:absolute;bottom:-14px;border-radius:50%;opacity:0}" +
+    "@keyframes amw-em{0%{opacity:0;transform:translate(0,0) scale(1)}12%{opacity:1}50%{transform:translate(calc(var(--sx)*-1),calc(var(--h)*.5)) scale(.9)}100%{opacity:0;transform:translate(var(--sx),var(--h)) scale(.4)}}";
+  for (let k = 0; k < EMBERS; k++) {
+    const size = (2 + rnd() * 3).toFixed(1), c = colors[Math.floor(rnd() * colors.length)], dur = (5 + rnd() * 6).toFixed(1);
+    css += ".amw-em i:nth-child(" + (k + 1) + "){left:" + (2 + rnd() * 96).toFixed(1) + "%;width:" + size + "px;height:" + size + "px;background:" + c + ";box-shadow:0 0 " + Math.round(size * 3) + "px " + c +
+      ";--sx:" + Math.round(-18 + rnd() * 36) + "px;--h:-" + Math.round(140 + rnd() * 220) + "px;animation:amw-em " + dur + "s ease-out -" + (rnd() * dur).toFixed(1) + "s infinite}";
+  }
+  return css + "@media (prefers-reduced-motion:reduce){.amw-em{display:none}}";
+};
+// Spotlight: a soft light on the board, and a brighter edge, that follow the mouse (desktop only; the script sets --mx, --my and --ml)
+const SPOT_CSS =
+  '.amw-stack{position:relative}.amw-stack::before,.amw-stack::after{content:"";position:absolute;inset:0;border-radius:28px;pointer-events:none;z-index:2;opacity:var(--ml,0);transition:opacity .4s}' +
+  ".amw-stack::before{background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--fc-brass) 13%,transparent),transparent 70%)}" +
+  ".amw-stack::after{padding:1px;background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),var(--fc-brass),transparent 70%);" +
+  "-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}" +
+  "@media (max-width:809.98px),(hover:none){.amw-stack::before,.amw-stack::after{display:none}}";
+const SPOT_JS =
+  "<script>(function(){if(!matchMedia('(hover:hover) and (pointer:fine)').matches)return;var f=0,e;document.addEventListener('pointermove',function(v){e=v;if(f)return;f=requestAnimationFrame(function(){f=0;" +
+  "var s=document.querySelector('.amw-stack');if(!s)return;var r=s.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;s.style.setProperty('--mx',x+'px');s.style.setProperty('--my',y+'px');" +
+  "s.style.setProperty('--ml',x>-60&&y>-60&&x<r.width+60&&y<r.height+60?1:0)})},{passive:true})})()</script>";
 // Sparkles that circle the workflow board, each on its own track just outside (or inside) the board's edge
 const SPARKS = 96;
 const sparkCss = () => {
@@ -1348,9 +1406,11 @@ const flowCss = () => {
 // Features, each switched on for the live site or kept for localhost only. ALL_FEATURES=1 node apply.mjs builds them all
 // (to preview). strip: moving tool-logo strip on the home page; pills: tool logos in case and service pills;
 // flow: live workflow demo on the home page; theme: dark/light button (dark by default when on);
-// sparkle: sparkles circling the workflow demo.
-const FEATURES = process.env.ALL_FEATURES ? { strip: true, pills: true, flow: true, theme: true, sparkle: true }
-  : { strip: false, pills: false, flow: true, theme: false, sparkle: true };
+// sparkle: sparkles circling the workflow demo; burst: sparkle bursts and data trails in the demo;
+// ember: specks rising from under the demo; spot: a light following the mouse on the demo.
+const FEATURES = process.env.ALL_FEATURES ? { strip: true, pills: true, flow: true, theme: true, sparkle: true, burst: true, ember: true, spot: true }
+  : { strip: false, pills: false, flow: true, theme: false, sparkle: true, burst: true,
+    ember: true, spot: true };
 
 // Styles for the extras, added to every page's <head>
 const STRIP_CSS =
@@ -1393,7 +1453,7 @@ const FAQ_CSS =
   ".fcf .fcf-chat{height:min(860px,92vh)}.fcf .fcf-chips{max-height:46%;overflow-y:auto;flex-shrink:0}" +
   "section.fcf.is-ph .fcf-chat{height:min(700px,88vh)}section.fcf.is-ph .fcf-chips{max-height:232px}";
 const EXTRA_HEAD =
-  "<style>" + ARTICLE_CSS + FAQ_CSS + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() + (FEATURES.sparkle ? sparkCss() : "") : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
+  "<style>" + ARTICLE_CSS + FAQ_CSS + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() + (FEATURES.sparkle ? sparkCss() : "") + (FEATURES.burst ? burstCss() : "") + (FEATURES.ember ? emberCss() : "") + (FEATURES.spot ? SPOT_CSS : "") : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
   (FEATURES.theme ? "<script>try{var t=localStorage.getItem('am-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script>" : "");
 const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M1.5 12H4M20 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>';
@@ -1699,6 +1759,7 @@ export const html = [
   // Styles for the extras on every page, and the theme button when that feature is on
   ["</head>", EXTRA_HEAD + "</head>", "extras head"],
   ...(FEATURES.theme ? [["</body>", THEME_BUTTON + "</body>", "theme button"]] : []),
+  ...(FEATURES.flow && FEATURES.spot ? [["</body>", SPOT_JS + "</body>", "workflow spotlight"]] : []),
   // Chat questions: the extra rows in the CMS bridge, the buttons and the screen-reader list
   [/(data-slug="q8"[\s\S]*?<\/span><!--\/\$--><\/div><\/div>)/g, "$1" + FAQ_MORE.map(faqSpan).join(""), "faq more rows"],
   [/(start small\?<\/button>)/g, "$1" + FAQ_MORE.map(([q]) => `<button type="button" class>${esc(q)}</button>`).join(""), "faq more buttons"],
