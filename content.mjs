@@ -773,6 +773,161 @@ const serviceExtraHtml = () =>
   '<div class="fcsv-x"><h2 class="fcsv-h" style="' + DISPLAY_STYLE + '">' + SERVICE_EXTRA.title + '</h2><img src="' + SERVICE_EXTRA.img +
   '" alt="' + SERVICE_EXTRA.alt + '" loading="lazy" decoding="async">' + SERVICE_EXTRA.ps.map((p) => "<p>" + p + "</p>").join("") + "</div>";
 
+// Tool logos (Simple Icons, brand colours) in assets/tools/<key>.svg. TOOL_KEYS maps a tool name as written on the site to its file
+const TOOL_KEYS = {
+  n8n: "n8n", make: "make", "make.com": "make", zapier: "zapier", zoho: "zoho", "zoho crm": "zoho", "zoho sign": "zoho",
+  openai: "openai", gpt: "openai", anthropic: "anthropic", claude: "anthropic", supabase: "supabase", quickbooks: "quickbooks",
+  hubspot: "hubspot", "google sheets": "googlesheets", slack: "slack", stripe: "stripe", airtable: "airtable", notion: "notion",
+  python: "python", react: "react", twilio: "twilio", whatsapp: "whatsapp", gmail: "gmail", xero: "xero", sage: "sage",
+  "google drive": "googledrive", vercel: "vercel", postgres: "postgresql", postgresql: "postgresql", shopify: "shopify",
+};
+// Home: the moving strip of tools under the projects carousel [file, name]
+const TOOL_STRIP = [
+  ["n8n", "n8n"], ["make", "Make"], ["zapier", "Zapier"], ["zoho", "Zoho"], ["openai", "OpenAI"], ["anthropic", "Claude"],
+  ["supabase", "Supabase"], ["quickbooks", "QuickBooks"], ["hubspot", "HubSpot"], ["googlesheets", "Google Sheets"],
+  ["slack", "Slack"], ["stripe", "Stripe"], ["airtable", "Airtable"], ["notion", "Notion"], ["xero", "Xero"],
+  ["twilio", "Twilio"], ["whatsapp", "WhatsApp"], ["shopify", "Shopify"], ["python", "Python"], ["react", "React"],
+];
+const toolStripHtml = () => {
+  const items = TOOL_STRIP.map(([k, n]) => '<span><img src="/assets/tools/' + k + '.svg" alt="" width="24" height="24">' + n + "</span>").join("");
+  return '<div class="fctl"><p class="fctl-h">Tools we automate</p><div class="fctl-m" aria-label="Tools we work with"><div class="fctl-t">' +
+    items + '<i aria-hidden="true">' + items + "</i></div></div></div>";
+};
+// u and d are the bundle's names for jsxs (several children) and jsx (one child)
+const toolStripJs = (u, d) => {
+  const items = (hidden) => TOOL_STRIP.map(([k, n], i) => u + "(`span`,{children:[" + d + "(`img`,{src:`/assets/tools/" + k + ".svg`,alt:``,width:24,height:24})," + JSON.stringify(n) + "]}," + (hidden ? 100 + i : i) + ")").join(",");
+  return u + "(`div`,{className:`fctl`,children:[" + d + "(`p`,{className:`fctl-h`,children:`Tools we automate`})," + d + "(`div`,{className:`fctl-m`,\"aria-label\":`Tools we work with`,children:" + u + "(`div`,{className:`fctl-t`,children:[" +
+    items(false) + "," + d + "(`i`,{\"aria-hidden\":!0,children:[" + items(true) + "]})]})})]})";
+};
+// A tool name as a pill with its logo (case pages and service pages); JS form takes the name in e and the key in k
+const TOOL_PILL_JS = (list) =>
+  list + ".map((e,t)=>{let k=" + JSON.stringify(TOOL_KEYS) + "[String(e).toLowerCase()];return k?u(`span`,{className:`has-ic`,children:[d(`img`,{src:`/assets/tools/${k}.svg`,alt:``,width:16,height:16}),e]},t):d(`span`,{children:e},t)})";
+const toolPillHtml = (inner) =>
+  inner.replace(/<span>([^<]+)<\/span>/g, (m, n) => {
+    const k = TOOL_KEYS[n.toLowerCase()];
+    return k ? '<span class="has-ic"><img src="/assets/tools/' + k + '.svg" alt="" width="16" height="16">' + n + "</span>" : m;
+  });
+
+// Home: a live workflow demo above the tool strip. Each step lights up in turn (CSS only), then the run starts again.
+// [tool logo, step, detail]
+const FLOW_STEPS = [
+  ["gmail", "Email arrives", "Invoice from a supplier"],
+  ["openai", "AI reads it", "Supplier, amount, due date"],
+  ["zoho", "CRM updated", "Deal and contact saved"],
+  ["googlesheets", "Logged", "Row added to the tracker"],
+  ["slack", "Team alerted", "#finance, with a summary"],
+];
+const FLOW_CYCLE = 8; // seconds per run
+// A small element tree rendered both as HTML and as the bundle's jsx calls: [tag, class, children, attributes]
+const flowTree = () => {
+  const step = ([k, t, s], i) => [
+    "div", "amw-n amw-n" + i, [
+      ["span", "amw-ic", [["img", "", [], { src: "/assets/tools/" + k + ".svg", alt: "", width: 22, height: 22 }]]],
+      ["b", "", [t]],
+      ["small", "", [s]],
+      ["i", "amw-ok", ["✓"], { "aria-hidden": true }],
+    ],
+  ];
+  const kids = [];
+  FLOW_STEPS.forEach((s, i) => {
+    if (i) kids.push(["span", "amw-c amw-c" + (i - 1), [["i", "", []]], { "aria-hidden": true }]);
+    kids.push(step(s, i));
+  });
+  return ["div", "amw", [
+    ["div", "amw-hd", [
+      ["p", "amw-eb", ["Live workflow"]],
+      ["h3", "", ["One email in. Everything else runs on its own."]],
+      ["p", "amw-run", [["i", "", [], { "aria-hidden": true }], "Every run in about 4 seconds"]],
+    ]],
+    ["div", "amw-flow", kids, { role: "img", "aria-label": "Workflow: " + FLOW_STEPS.map((s) => s[1]).join(", then ") }],
+  ]];
+};
+const flowHtml = ([tag, cls, kids, attrs = {}] = flowTree()) => {
+  const a = (cls ? ' class="' + cls + '"' : "") + Object.entries(attrs).map(([k, v]) => " " + k + '="' + v + '"').join("");
+  if (tag === "img") return "<img" + a + ">";
+  return "<" + tag + a + ">" + kids.map((c) => (typeof c === "string" ? c : flowHtml(c))).join("") + "</" + tag + ">";
+};
+const flowJs = (u, d, [tag, cls, kids, attrs = {}] = flowTree()) => {
+  const props = (cls ? ["className:`" + cls + "`"] : []).concat(
+    Object.entries(attrs).map(([k, v]) => JSON.stringify(k) + ":" + (v === true ? "!0" : JSON.stringify(v))));
+  const ch = kids.map((c) => (typeof c === "string" ? JSON.stringify(c) : flowJs(u, d, c)));
+  if (ch.length) props.push("children:" + (ch.length > 1 ? "[" + ch.join(",") + "]" : ch[0]));
+  return (ch.length > 1 ? u : d) + "(`" + tag + "`,{" + props.join(",") + "})";
+};
+// Keyframes per step: each one waits, lights up, stays done, and all reset just before the next run
+const flowCss = () => {
+  const n = FLOW_STEPS.length, at = (i) => 6 + i * 16;
+  let css = "";
+  for (let i = 0; i < n; i++) {
+    const s = at(i);
+    css += "@keyframes amw-n" + i + "{0%," + (s - 0.1) + "%,97%,100%{opacity:.42;border-color:var(--amw-line);box-shadow:none;transform:none}" +
+      (s + 3) + "%{opacity:1;border-color:var(--fc-brass);box-shadow:0 0 0 1px var(--fc-brass),0 14px 40px -12px var(--fc-brass);transform:translateY(-4px)}" +
+      (s + 12) + "%,90%{opacity:1;border-color:color-mix(in srgb,var(--fc-brass) 45%,transparent);box-shadow:none;transform:none}}" +
+      "@keyframes amw-ok" + i + "{0%," + (s + 10) + "%,95%,100%{opacity:0;transform:scale(.4)}" + (s + 12) + "%,90%{opacity:1;transform:none}}" +
+      ".amw-n" + i + "{animation:amw-n" + i + " " + FLOW_CYCLE + "s infinite}.amw-n" + i + " .amw-ok{animation:amw-ok" + i + " " + FLOW_CYCLE + "s infinite}";
+    if (i < n - 1)
+      css += "@keyframes amw-c" + i + "{0%," + (s + 9) + "%{left:0;opacity:0}" + (s + 10) + "%{left:0;opacity:1}" + (at(i + 1) - 0.5) + "%{left:100%;opacity:1}" +
+        at(i + 1) + "%,100%{left:100%;opacity:0}}.amw-c" + i + " i{animation:amw-c" + i + " " + FLOW_CYCLE + "s infinite}";
+  }
+  return css +
+    ".amw:last-child{margin-bottom:max(0px,calc(10vw - 50px))}.amw{--amw-line:color-mix(in srgb,var(--fc-cloud,#fff) 14%,transparent);grid-column:1/-1;position:relative;z-index:5;margin-top:clamp(56px,7vw,110px)}" +
+    ".amw-hd{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 32px;margin-bottom:28px}" +
+    ".amw-eb{flex-basis:100%;margin:0;font:500 12px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--fc-brass)}" +
+    ".amw-hd h3{margin:0;max-width:640px;font-size:clamp(26px,2.6vw,40px);font-weight:500;letter-spacing:-.04em;line-height:1.08;color:var(--fc-cloud,#fff)}" +
+    ".amw-run{display:inline-flex;align-items:center;gap:10px;margin:0;font:500 13px/1 'IBM Plex Mono',ui-monospace,monospace;color:var(--fc-mut)}" +
+    ".amw-run i{width:8px;height:8px;border-radius:50%;background:var(--fc-brass);box-shadow:0 0 10px var(--fc-brass);animation:amw-pulse 1.6s ease-in-out infinite}" +
+    "@keyframes amw-pulse{50%{opacity:.35}}" +
+    ".amw-flow{display:flex;align-items:stretch;padding:28px;border:1px solid var(--amw-line);border-radius:28px;" +
+    "background:radial-gradient(color-mix(in srgb,var(--fc-cloud,#fff) 9%,transparent) 1px,transparent 1px) 0 0/22px 22px,color-mix(in srgb,var(--fc-cloud,#fff) 3%,transparent)}" +
+    ".amw-n{position:relative;flex:1;display:flex;flex-direction:column;gap:6px;padding:18px 16px;border:1px solid var(--amw-line);border-radius:18px;" +
+    "background:color-mix(in srgb,var(--fc-night,#07100c) 82%,var(--fc-cloud,#fff) 4%);color:var(--fc-cloud,#fff)}" +
+    ".amw-ic{display:grid;place-items:center;width:42px;height:42px;margin-bottom:8px;border-radius:12px;background:#fff}.amw-ic img{width:22px;height:22px}" +
+    ".amw-n b{font-size:16px;font-weight:600;letter-spacing:-.01em}.amw-n small{font-size:13px;line-height:1.4;color:var(--fc-mut)}" +
+    ".amw-ok{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--fc-brass);color:#04120c;font-size:12px;font-style:normal;font-weight:700;opacity:0}" +
+    ".amw-c{position:relative;flex:0 0 clamp(18px,2.4vw,40px);align-self:center;height:2px;background:var(--amw-line)}" +
+    ".amw-c i{position:absolute;top:50%;left:0;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:var(--fc-brass);box-shadow:0 0 12px var(--fc-brass);opacity:0}" +
+    "@media (max-width:809.98px){.amw-flow{flex-direction:column;padding:14px}.amw-n{display:grid;grid-template-columns:42px 1fr;column-gap:14px;row-gap:2px;align-items:center;padding:12px 14px}.amw-ic{grid-row:span 2;margin:0}.amw-n b{align-self:end}.amw-n small{align-self:start}.amw-c{flex-basis:22px;width:2px;height:auto;align-self:center}.amw-c i{display:none}}" +
+    "@media (prefers-reduced-motion:reduce){.amw *{animation:none!important}.amw-n{opacity:1!important}.amw-ok{opacity:1!important}}";
+};
+
+// Features, each switched on for the live site or kept for localhost only. ALL_FEATURES=1 node apply.mjs builds them all
+// (to preview). strip: moving tool-logo strip on the home page; pills: tool logos in case and service pills;
+// flow: live workflow demo on the home page; theme: dark/light button (dark by default when on).
+const FEATURES = process.env.ALL_FEATURES ? { strip: true, pills: true, flow: true, theme: true } : { strip: false, pills: false, flow: true, theme: false };
+
+// Styles for the extras, added to every page's <head>
+const STRIP_CSS =
+  ".fctl{position:relative;z-index:5;grid-column:1/-1;margin-top:clamp(28px,4vw,60px);margin-bottom:max(0px,calc(10vw - 50px))}.fctl-m{padding:6px 0}.fctl-h{margin:0 0 24px;text-align:center;font:500 12px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--fc-mut)}" +
+  ".fctl-m{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}" +
+  ".fctl-t{display:flex;width:max-content;animation:fctl 45s linear infinite}.fctl-m:hover .fctl-t{animation-play-state:paused}.fctl-t i{display:contents}" +
+  ".fctl-t span{display:inline-flex;align-items:center;gap:10px;margin-right:52px;font-size:18px;font-weight:500;letter-spacing:-.01em;white-space:nowrap;color:var(--fc-cloud,#fff);opacity:.7;transition:opacity .3s}" +
+  ".fctl-t img{width:24px;height:24px;filter:brightness(0) invert(1);transition:filter .3s}.fctl-t span:hover{opacity:1}.fctl-t span:hover img{filter:none}" +
+  "@keyframes fctl{to{transform:translateX(-50%)}}@media (prefers-reduced-motion:reduce){.fctl-t{animation:none}}" +
+  "html[data-theme=light] .fctl-t img{filter:brightness(0)}";
+const PILL_CSS =
+  "span.has-ic{display:inline-flex!important;align-items:center;gap:7px}span.has-ic img{width:16px;height:16px;flex:none}";
+// Two themes, dark by default. Dark: the light ("bone") sections turn dark by swapping the colour tokens; dark sections keep theirs.
+// Light: the dark sections (.fc-dark, and the header) turn light the same way.
+const THEME_CSS =
+  "html[data-theme=dark] body{--token-0891008a-32ca-47b1-8840-7637f8ffab38:#0E161B;--token-1787f81e-c38e-4944-9e2f-612b26580daf:#E6EDEC;" +
+  "--token-1fd6b3cd-b255-4559-8184-bc1950f645f2:#15212A;--token-f437083a-6838-4188-9216-339e3e3987ad:#24333C;--token-f2d690a8-f54f-4bde-87fd-b6557d995849:#8E9DA2;background:#0E161B}" +
+  "html[data-theme=dark] :is(.fc-dark,.fchd){--fc-bone:#f1f0eb!important;--fc-ink:#0e0f12!important;--fc-cloud:#fff!important;--fc-fog:#dad8d0!important;--fc-stone:#6b6e6a!important}" +
+  "html[data-theme=dark] :is(span.has-ic,.fctl-t span) img[src$='/notion.svg'],html[data-theme=dark] :is(span.has-ic) img[src$='/vercel.svg'],html[data-theme=dark] span.has-ic img[src$='/anthropic.svg']{filter:invert(1)}" +
+  "html[data-theme=light] :is(.fc-dark,.fchd){--fc-night:#F1F0EB!important;--fc-pine:#E4E8E6!important;--fc-cloud:#0E0F12!important;--fc-ink:#FFFFFF!important;--fc-fog:#DAD8D0!important}" +
+  ".am-theme{position:fixed;left:18px;bottom:18px;z-index:3000;display:grid;place-items:center;width:46px;height:46px;padding:0;border:1px solid rgba(255,255,255,.16);border-radius:50%;" +
+  "background:rgba(10,16,20,.82);color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 10px 30px -10px rgba(0,0,0,.6);transition:transform .3s}" +
+  ".am-theme:hover{transform:scale(1.08)}.am-theme svg{width:20px;height:20px}";
+const EXTRA_HEAD =
+  "<style>" + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
+  (FEATURES.theme ? "<script>try{var t=localStorage.getItem('am-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script>" : "");
+const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M1.5 12H4M20 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>';
+const THEME_BUTTON =
+  "<script>(function(){var r=document.documentElement,b=document.createElement('button');b.type='button';b.className='am-theme';" +
+  "function s(){var d=r.dataset.theme==='dark';b.innerHTML=d?" + JSON.stringify(SUN) + ":" + JSON.stringify(MOON) + ";b.title=b.ariaLabel=d?'Light mode':'Dark mode'}" +
+  "b.onclick=function(){var d=r.dataset.theme!=='dark';r.dataset.theme=d?'dark':'light';try{localStorage.setItem('am-theme',d?'dark':'light')}catch(e){}s()};" +
+  "s();document.body.appendChild(b)})()</script>";
+
 // Site colours. The template ships emerald (#19d98b) on green-black; each entry swaps those values everywhere
 const PALETTES = {
   emerald: { accent: "#19d98b", hi: "#9ff5cf", pine: "#0d1b16", night: "#07100c", rgb: "25,217,139" },
@@ -810,6 +965,14 @@ const headGradient = (p) => {
 };
 
 export const rules = [
+  // Home: the workflow demo and the moving tool-logo strip at the end of the projects section (FcLogos names jsxs o and jsx s)
+  ...(FEATURES.flow || FEATURES.strip ? [["children:[e.n,`: `,e.r]},t))})]", "children:[e.n,`: `,e.r]},t))})," +
+    [FEATURES.flow && flowJs("o", "s"), FEATURES.strip && toolStripJs("o", "s")].filter(Boolean).join(",") + "]", "tool strip js"]] : []),
+  // Tool pills with logos: case pages (list ne) and service pages (list P)
+  ...(FEATURES.pills ? [
+    ["children:ne.map((e,t)=>d(`span`,{children:e},t))", "children:" + TOOL_PILL_JS("ne"), "case tool pills js"],
+    ["children:P.map((e,t)=>d(`span`,{children:e},t))", "children:" + TOOL_PILL_JS("P"), "service tool pills js"],
+  ] : []),
   // Workflow automation service page: the construction company section from SERVICE_EXTRA (t is the page slug)
   ["L.length>0&&u(`div`,{className:`fcsv-others`",
     "t===`" + SERVICE_EXTRA.slug + "`&&u(`div`,{className:`fcsv-x`,children:[d(`h2`,{className:`fcsv-h`,style:_,children:" + JSON.stringify(SERVICE_EXTRA.title) +
@@ -932,6 +1095,13 @@ export const rules = [
   [/25,217,139/g, PAL.rgb, "palette globe"],
   ["linear-gradient(100deg,var(--fc-brass) 10%,color-mix(in srgb,var(--fc-brass) 35%,var(--fc-cloud)) 90%)", headGradient(PAL), "palette headline gradient"],
   ["background:linear-gradient(90deg,transparent,var(--fc-brass) 60%,#fff)", "background:linear-gradient(90deg,transparent,var(--fc-brass) 60%," + PAL.hi + ")", "palette flow"],
+  // Server-rendered tool strip and tool pills (last, so the tool names are already the site's)
+  ...(FEATURES.flow || FEATURES.strip ? [[/(class="fc fcl fc-dark[^"]*"[\s\S]*?<ul class="fc-sr">[\s\S]*?<\/ul>)/g,
+    (m) => m + (FEATURES.flow ? flowHtml() : "") + (FEATURES.strip ? toolStripHtml() : ""), "tool strip html"]] : []),
+  ...(FEATURES.pills ? [
+    [/(>Tools<\/dt><dd>)([\s\S]*?)(<\/dd>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "case tool pills html"],
+    [/(<div class="fcsv-tools"[^>]*>)([\s\S]*?)(<\/div>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "service tool pills html"],
+  ] : []),
 ];
 
 // ---------- Server-rendered HTML for list-style content (the scripts render the same on load) ----------
@@ -1016,6 +1186,9 @@ const ssr = [
 
 export const html = [
   ...ssr,
+  // Styles for the extras on every page, and the theme button when that feature is on
+  ["</head>", EXTRA_HEAD + "</head>", "extras head"],
+  ...(FEATURES.theme ? [["</body>", THEME_BUTTON + "</body>", "theme button"]] : []),
   // Case pages: the extra chapter in the server-rendered HTML too (matched by each case's original "What we built" text)
   [/(A support agent on chat and email that answers from Shopify[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("hostyo"), "hostyo extra chapter"],
   [/(In production<!-- --> · <!-- -->Ledgerly<\/span>[\s\S]*?<\/a><\/div><\/div>)(?=<div class="fcsv-others">)/g, "$1" + serviceExtraHtml(), "workflow extra section"],
