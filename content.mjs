@@ -247,9 +247,9 @@ const SHOTS = {
 // About page story, one paragraph each; the last one describes the photo beside it
 // About story photo: clicking it steps through these screenshots [src, alt, caption]
 const ABOUT_GALLERY = [
-  ["/assets/work/gym-super-admin.png", "Super-admin of the multi-gym platform we built", "Gym platform super-admin"],
-  ["/assets/work/gym-members.png", "Members page of a gym on our platform", "Gym members"],
-  ["/assets/work/gym-plans.png", "Membership plans on our gym platform", "Gym membership plans"],
+  ["/assets/work/gym-super-admin.png", "Super-admin of the multi-gym platform we built", "Spark gym platform · super-admin"],
+  ["/assets/work/gym-members.png", "Members page of a gym on our platform", "Spark · gym members"],
+  ["/assets/work/gym-plans.png", "Membership plans on our gym platform", "Spark · membership plans"],
   ["/assets/work/hostyo-finances.png", "Hostyo owner portal finances", "Hostyo owner finances"],
   ["/assets/work/guardxflow-history.png", "GuardXFlow invoice history", "GuardXFlow invoice history"],
   ["/assets/work/closing-date-watcher.jpg", "Closing Date Watcher n8n workflow", "n8n Closing Date Watcher"],
@@ -262,19 +262,24 @@ const ABOUT_GALLERY_NEXT =
 const ABOUT_STORY = [
   "Automyra AI started in 2025 in Karachi, when a small team of developers who had been building AI agents and n8n workflows for clients on Upwork decided to work as one studio.",
   "We start with the work, not the model: we learn how your team does it today, find the hours, then build the agents, workflows and apps that take them back — with the logs and hand-over rules an operations lead would demand.",
-  "In the photos (click to see the next one): screens from systems we built and still run. First up is the super-admin of our multi-gym platform. Every gym, its owners, Stripe account and status sit in one place, and each gym gets its own panel for members, plans, classes, programming and magic links.",
+  "In the photos (click to see the next one): screens from systems we built and still run. First up is Spark, our multi-tenant gym platform. Its super-admin shows every gym, its owners, Stripe account and status in one place, and each gym gets its own panel for members, plans, classes, programming and magic links.",
+  "Spark is white-label and runs six CrossFit gyms from a single codebase, live on web, iOS and Android (React, TypeScript, Supabase, Capacitor and Stripe). Each gym has its own branding, members, pricing and programming, and row-level security in Postgres keeps every gym’s data apart at the database level, not in app code.",
+  "Members book classes with waitlists and follow their personal records and leaderboards in the app. Coaches import the Word or PDF workouts they already write, run private coaching with intake forms and check-ins, and send push notifications. Billing runs on Stripe subscriptions with accounting exports, in English and French. Behind it: 103 database tables, 147 migrations, 27 edge functions and 187 React components.",
 ];
 
 // Journal posts: an "About the cover" section after the body's last line, describing the screenshot used as the cover.
 // The body appears as JS, a data attribute, page JSON and rendered HTML, so each form gets a rule.
 const H2 = `<h2 style="font-family:var(--fc-font-d, 'Geist'), Inter, -apple-system, Arial, sans-serif;font-weight:var(--fc-font-dw, 500);font-style:normal">`;
-const aboutCover = (last, text) => {
-  const md = "\n\n## About the cover\n\n" + text;
+// `more` adds further sections after it: [heading, [paragraph, ...]]
+const aboutCover = (last, text, more = []) => {
+  const sections = [["About the cover", [text]], ...more];
+  const md = sections.map(([h, ps]) => "\n\n## " + h + "\n\n" + ps.join("\n\n")).join("");
+  const htm = sections.map(([h, ps]) => H2 + h + "</h2>" + ps.map((p) => "<p>" + p + "</p>").join("")).join("");
   return [
     [last + "`,f6:", last + md + "`,f6:", last],
     [last + '" data-f6', last + md + '" data-f6', last],
     [last + '",{"type":6', last + JSON.stringify(md).slice(1, -1) + '",{"type":6', last],
-    [last + "</p>", last + "</p>" + H2 + "About the cover</h2><p>" + text + "</p>", last],
+    [last + "</p>", last + "</p>" + htm, last],
   ];
 };
 const COVERS = [
@@ -283,7 +288,17 @@ const COVERS = [
   ...aboutCover("reps start the day with the best leads at the top.",
     "The cover shows a sister build in Zapier for project leads: each new lead in Google Sheets is validated, sorted by contact (no email, first or second contact, or early days), emailed through Gmail, analysed with AI by Zapier, logged in Zoho CRM and moved to the archive sheet."),
   ...aboutCover("Agents that people trust enough to stop checking.",
-    "The cover is GuardXFlow, an invoice tool we built around this idea. AI reads every invoice, whether a PDF, a Word file or a phone photo, and fills in the supplier, number, date, subtotal and taxes. Nothing reaches the books until a person ticks the box to confirm they have verified the extracted information."),
+    "The cover is GuardXFlow, an invoice tool we built around this idea. AI reads every invoice, whether a PDF, a Word file or a phone photo, and fills in the supplier, number, date, subtotal and taxes. Nothing reaches the books until a person ticks the box to confirm they have verified the extracted information.", [
+    ["What GuardXFlow does for the client", [
+      "GuardXFlow is accounts-payable automation for a Québec business, built with React 19, TanStack Start and Supabase and connected to QuickBooks, Xero and Sage. Supplier invoices arrive in a mailbox, as phone photos of handwritten bills and as PDFs in cloud storage. GuardXFlow collects all of it in one queue, reads each document and files it to the accounting software once a person has approved it.",
+      "Nothing gets typed twice. Invoices are read out of the email or the photo (supplier, number, dates, totals, tax lines, line items) and arrive ready to check.",
+      "Duplicate payments are caught before approval, on graded evidence rather than a guess: an identical file, the same number and amount, or the same supplier and amount on the same day. When a supplier prints the customer’s account number where the invoice number belongs, that counts as evidence against a duplicate, because flagging those was burying real bills.",
+      "Two-person control where it matters: each company can require a second approval above an amount it sets. Several companies share one queue, each with its own fiscal year, currency and approval rules.",
+      "Bilingual and Québec-first: Quebecois French throughout, GST/QST, and figures read from the books rather than recalculated.",
+      "An assistant that cannot act on its own. Nicol answers in plain language, by voice or text, across every module and the connected ledger. It can offer to approve an invoice, but the offer counts only when the person presses a server-side confirmation card. Saying ‘yes’ in the chat confirms nothing.",
+      "The books stay the source of truth. The money logic lives in pure, tested modules (400+ assertions), and the AI never does the arithmetic.",
+    ]],
+  ]),
 ];
 
 // Service slug -> its case study slug
@@ -728,6 +743,42 @@ const caseExtraHtml = (slug) =>
   CASE_EXTRA[slug][1].replace(/&/g, "&amp;").replace(/'/g, "&#x27;") + "</p></div>";
 const CASE_LAB_STYLE = "font-family:var(--fc-font-m, 'IBM Plex Mono'), ui-monospace, SFMono-Regular, Menlo, monospace;font-weight:var(--fc-font-mw, 400)";
 
+// Site colours. The template ships emerald (#19d98b) on green-black; each entry swaps those values everywhere
+const PALETTES = {
+  emerald: { accent: "#19d98b", hi: "#9ff5cf", pine: "#0d1b16", night: "#07100c", rgb: "25,217,139" },
+  blue: { accent: "#3B82F6", hi: "#93C5FD", pine: "#0E1729", night: "#060A14", rgb: "59,130,246" },
+  amber: { accent: "#FF8A1F", hi: "#FFD08A", pine: "#1C130B", night: "#0D0906", rgb: "255,138,31" },
+  lime: { accent: "#C6F432", hi: "#F1FFC2", pine: "#161A0C", night: "#0A0B07", rgb: "198,244,50" },
+  teal: { accent: "#14B8A6", hi: "#FCD34D", pine: "#0B1A1C", night: "#061012", rgb: "20,184,166" },
+  gold: { accent: "#E7B54A", hi: "#FFF1C7", pine: "#1A160D", night: "#0C0A06", rgb: "231,181,74" },
+  rose: { accent: "#F43F5E", hi: "#FDA4AF", pine: "#1D0E13", night: "#0D0709", rgb: "244,63,94" },
+  sky: { accent: "#38BDF8", hi: "#E0F2FE", pine: "#0B1822", night: "#060D13", rgb: "56,189,248" },
+  coral: { accent: "#FF6B4A", hi: "#FFC2A8", pine: "#1C100D", night: "#0D0807", rgb: "255,107,74" },
+  silver: { accent: "#E5E7EB", hi: "#9CA3AF", pine: "#16181C", night: "#0A0B0D", rgb: "229,231,235" },
+  indigo: { accent: "#6366F1", hi: "#F472B6", pine: "#12122A", night: "#08081A", rgb: "99,102,241" },
+  sunset: { accent: "#FF6A3D", mid: "#FF3D8B", hi: "#FFB86B", pine: "#1E0F14", night: "#0E070A", rgb: "255,106,61" },
+  cyber: { accent: "#00E5FF", mid: "#7C5CFF", hi: "#FF2BD6", pine: "#0D1024", night: "#060714", rgb: "0,229,255" },
+  mintblue: { accent: "#00F5A0", hi: "#00D9F5", pine: "#0A1A1E", night: "#050E11", rgb: "0,245,160" },
+  fire: { accent: "#F7971E", hi: "#FFD200", pine: "#1C140A", night: "#0D0905", rgb: "247,151,30" },
+  violetorange: { accent: "#A855F7", mid: "#EC4899", hi: "#F97316", pine: "#170E22", night: "#0B0712", rgb: "168,85,247" },
+  aquapink: { accent: "#4FACFE", hi: "#F093FB", pine: "#0E1424", night: "#070A14", rgb: "79,172,254" },
+  aurora2: { accent: "#00F5A0", grad: ["#00F5A0", "#00D9F5", "#A855F7"], hi: "#A855F7", pine: "#0A1620", night: "#050C12", rgb: "0,245,160" },
+  oceansunset: { accent: "#22D3EE", grad: ["#22D3EE", "#818CF8", "#F472B6", "#FB923C"], hi: "#FB923C", pine: "#0E1222", night: "#070912", rgb: "34,211,238" },
+  tropical: { accent: "#4ADE80", grad: ["#FACC15", "#4ADE80", "#22D3EE"], hi: "#22D3EE", pine: "#0B1A14", night: "#060E0B", rgb: "74,222,128" },
+  royal: { accent: "#8B5CF6", grad: ["#6366F1", "#A855F7", "#F59E0B"], hi: "#F59E0B", pine: "#140F24", night: "#0A0714", rgb: "139,92,246" },
+  candy: { accent: "#C084FC", grad: ["#F472B6", "#C084FC", "#60A5FA"], hi: "#60A5FA", pine: "#160F22", night: "#0B0812", rgb: "192,132,252" },
+  lava: { accent: "#F97316", grad: ["#EF4444", "#F97316", "#FACC15"], hi: "#FACC15", pine: "#1C0E0A", night: "#0E0705", rgb: "249,115,22" },
+  emeraldgold: { accent: "#10B981", grad: ["#10B981", "#34D399", "#FDE68A"], hi: "#FDE68A", pine: "#0B1A14", night: "#060E0B", rgb: "16,185,129" },
+  ice: { accent: "#7DD3FC", grad: ["#E0F2FE", "#7DD3FC", "#6366F1"], hi: "#6366F1", pine: "#0B1424", night: "#060A14", rgb: "125,211,252" },
+  rainbow: { accent: "#00D9F5", grad: ["#00F5A0", "#00D9F5", "#7C5CFF", "#FF2BD6"], hi: "#FF2BD6", pine: "#0B1020", night: "#060812", rgb: "0,217,245" },
+};
+const PAL = PALETTES[process.env.PALETTE || "mintblue"];
+// Headline "everything." gradient: the palette's stops spread from 10% to 90%, or accent → (mid →) highlight
+const headGradient = (p) => {
+  const stops = p.grad || ["var(--fc-brass)", ...(p.mid ? [p.mid] : []), p.hi];
+  return "linear-gradient(100deg," + stops.map((c, i) => c + " " + Math.round(10 + (80 * i) / (stops.length - 1)) + "%").join(",") + ")";
+};
+
 export const rules = [
   // Case pages: render the extra chapter from CASE_EXTRA
   [
@@ -837,6 +888,14 @@ export const rules = [
   // Company name: Automyra SI everywhere (last, so it also catches names written by the rules above)
   ["Automyra AI", "Automyra SI"],
   ["automyra ai", "automyra si"],
+  // Colour palette (PALETTE below): accent, its highlight, and the two dark backgrounds
+  [/#19d98b/gi, PAL.accent, "palette accent"],
+  [/#0d1b16/gi, PAL.pine, "palette pine"],
+  [/#07100c/gi, PAL.night, "palette night"],
+  [/#58d68d|#2fbf71/gi, PAL.hi, "palette dots"],
+  [/25,217,139/g, PAL.rgb, "palette globe"],
+  ["linear-gradient(100deg,var(--fc-brass) 10%,color-mix(in srgb,var(--fc-brass) 35%,var(--fc-cloud)) 90%)", headGradient(PAL), "palette headline gradient"],
+  ["background:linear-gradient(90deg,transparent,var(--fc-brass) 60%,#fff)", "background:linear-gradient(90deg,transparent,var(--fc-brass) 60%," + PAL.hi + ")", "palette flow"],
 ];
 
 // ---------- Server-rendered HTML for list-style content (the scripts render the same on load) ----------
@@ -942,7 +1001,7 @@ export const html = [
   [/(<a class="(?:fchd|fco)-logo"[^>]*><svg[\s\S]*?<\/svg>)[^<]*<\/a>/g, "$1" + LOGO_NAME + LOGO_SUB_HTML + "</a>", "logo text"],
   // About story as rendered on the page (the script renders ABOUT_STORY the same way)
   [/(<p class="fcab-p" style="[^"]*">)Flowcraft started in 2021[^<]*<\/p><p class="fcab-p" style="([^"]*)">So we built a studio[^<]*<\/p>/g,
-    (m, p1, s2) => `${p1}${ABOUT_STORY[0]}</p><p class="fcab-p" style="${s2}">${ABOUT_STORY[1]}</p><p class="fcab-p" style="${s2.replace(/520ms/g, "640ms")}">${ABOUT_STORY[2]}</p>`, "about story"],
+    (m, p1, s2) => p1 + ABOUT_STORY[0] + "</p>" + ABOUT_STORY.slice(1).map((p, i) => `<p class="fcab-p" style="${s2.replace(/520ms/g, 520 + 120 * i + "ms")}">${p}</p>`).join(""), "about story"],
   // Lead-scoring post body as rendered on its page
   [">The problem was the phone</h2><p>A third of calls rang out at lunch and after five.</p>",
     ">The problem was the order</h2><p>Reps called leads in the order they arrived, so the best merchants waited while time went to poor fits.</p>"],
