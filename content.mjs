@@ -465,7 +465,9 @@ const sitewide = [
       "Connects APIs, scrapers and data pipelines, and keeps them running. Top Rated on Upwork.",
   }),
   [IMG + "msSr3aFiYWr5AeW5HFJveqW8Ikw.webp", "/assets/team-soban.svg"],
-  [IMG + "KlxBQZf0VdDz9LZ380WbtBGW4.webp", "/assets/team-hamza.svg"],
+  [IMG + "KlxBQZf0VdDz9LZ380WbtBGW4.webp", "/assets/team/hamza.jpg"],
+  // Real photos are tall portraits: keep the face in the 3:4 frame
+  [".fcab-tp{position:relative;display:block;aspect-ratio:3/4;", ".fcab-tp img[src^=\"/assets/team/\"]{object-position:50% 12%}.fcab-tp{position:relative;display:block;aspect-ratio:3/4;", "team photo position"],
   [IMG + "EafIAfdeuX4HicNn6hoUEhhCOs.webp", "/assets/team-mishaal.svg"],
   [IMG + "ofk1TJhVoioTNZgTMDue4RB7sQQ.webp", "/assets/team-asma.svg"],
 
@@ -960,6 +962,15 @@ const PALETTES = {
   emeraldgold: { accent: "#10B981", grad: ["#10B981", "#34D399", "#FDE68A"], hi: "#FDE68A", pine: "#0B1A14", night: "#060E0B", rgb: "16,185,129" },
   ice: { accent: "#7DD3FC", grad: ["#E0F2FE", "#7DD3FC", "#6366F1"], hi: "#6366F1", pine: "#0B1424", night: "#060A14", rgb: "125,211,252" },
   rainbow: { accent: "#00D9F5", grad: ["#00F5A0", "#00D9F5", "#7C5CFF", "#FF2BD6"], hi: "#FF2BD6", pine: "#0B1020", night: "#060812", rgb: "0,217,245" },
+  // Quieter palettes; these also set the light sections (bone) and the dark text (ink)
+  champagne: { accent: "#D4B483", hi: "#F3E3C3", pine: "#1A1712", night: "#0F0D0A", rgb: "212,180,131", bone: "#F4EFE6", ink: "#17140F" },
+  sage: { accent: "#A3B8A0", hi: "#E3EBDD", pine: "#161B17", night: "#0C0F0D", rgb: "163,184,160", bone: "#EEF0EA", ink: "#121613" },
+  navygold: { accent: "#C9A45C", hi: "#EBD9A8", pine: "#121A2E", night: "#0A1020", rgb: "201,164,92", bone: "#F3F0E8", ink: "#0E1424" },
+  wine: { accent: "#C08497", hi: "#F2D7DF", pine: "#22121A", night: "#13090D", rgb: "192,132,151", bone: "#F5EFEC", ink: "#1C1015" },
+  terracotta: { accent: "#D08C60", hi: "#F2CDB0", pine: "#1E1611", night: "#110C09", rgb: "208,140,96", bone: "#F3EEE7", ink: "#1A130E" },
+  emeraldgold: { accent: "#C8A96A", hi: "#EBDDB3", pine: "#0E2019", night: "#07130F", rgb: "200,169,106", bone: "#F1EFE7", ink: "#0C1A15" },
+  platinum: { accent: "#C7CCD4", grad: ["#E9ECF1", "#C7CCD4", "#8FA3BF"], hi: "#8FA3BF", pine: "#15181D", night: "#0B0D10", rgb: "199,204,212", bone: "#F2F3F5", ink: "#111318" },
+  slate: { accent: "#7FA7B5", hi: "#D6E6EB", pine: "#121D22", night: "#0A1114", rgb: "127,167,181", bone: "#EFF2F2", ink: "#0F171A" },
 };
 const PAL = PALETTES[process.env.PALETTE || "mintblue"];
 // Headline "everything." gradient: the palette's stops spread from 10% to 90%, or accent → (mid →) highlight
@@ -1095,6 +1106,7 @@ export const rules = [
   [/#19d98b/gi, PAL.accent, "palette accent"],
   [/#0d1b16/gi, PAL.pine, "palette pine"],
   [/#07100c/gi, PAL.night, "palette night"],
+  ...(PAL.bone ? [[/#f1f0eb/gi, PAL.bone, "palette bone"], [/#0e0f12/gi, PAL.ink, "palette ink"]] : []),
   [/#58d68d|#2fbf71/gi, PAL.hi, "palette dots"],
   [/25,217,139/g, PAL.rgb, "palette globe"],
   ["linear-gradient(100deg,var(--fc-brass) 10%,color-mix(in srgb,var(--fc-brass) 35%,var(--fc-cloud)) 90%)", headGradient(PAL), "palette headline gradient"],
