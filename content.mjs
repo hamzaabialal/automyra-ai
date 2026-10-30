@@ -270,11 +270,12 @@ const ABOUT_STORY = [
 // Journal posts: an "About the cover" section after the body's last line, describing the screenshot used as the cover.
 // The body appears as JS, a data attribute, page JSON and rendered HTML, so each form gets a rule.
 const H2 = `<h2 style="font-family:var(--fc-font-d, 'Geist'), Inter, -apple-system, Arial, sans-serif;font-weight:var(--fc-font-dw, 500);font-style:normal">`;
-// `more` adds further sections after it: [heading, [paragraph, ...]]
+// `more` adds further sections after it: [heading, [paragraph or [list items], ...]]
 const aboutCover = (last, text, more = []) => {
   const sections = [["About the cover", [text]], ...more];
-  const md = sections.map(([h, ps]) => "\n\n## " + h + "\n\n" + ps.join("\n\n")).join("");
-  const htm = sections.map(([h, ps]) => H2 + h + "</h2>" + ps.map((p) => "<p>" + p + "</p>").join("")).join("");
+  const md = sections.map(([h, ps]) => "\n\n## " + h + "\n\n" + ps.map((p) => (Array.isArray(p) ? p.map((li) => "- " + li).join("\n") : p)).join("\n\n")).join("");
+  const htm = sections.map(([h, ps]) => H2 + h + "</h2>" +
+    ps.map((p) => (Array.isArray(p) ? "<ul>" + p.map((li) => "<li>" + li + "</li>").join("") + "</ul>" : "<p>" + p + "</p>")).join("")).join("");
   return [
     [last + "`,f6:", last + md + "`,f6:", last],
     [last + '" data-f6', last + md + '" data-f6', last],
@@ -289,14 +290,44 @@ const COVERS = [
     "The cover shows a sister build in Zapier for project leads: each new lead in Google Sheets is validated, sorted by contact (no email, first or second contact, or early days), emailed through Gmail, analysed with AI by Zapier, logged in Zoho CRM and moved to the archive sheet."),
   ...aboutCover("Agents that people trust enough to stop checking.",
     "The cover is GuardXFlow, an invoice tool we built around this idea. AI reads every invoice, whether a PDF, a Word file or a phone photo, and fills in the supplier, number, date, subtotal and taxes. Nothing reaches the books until a person ticks the box to confirm they have verified the extracted information.", [
-    ["What GuardXFlow does for the client", [
-      "GuardXFlow is accounts-payable automation for a Québec business, built with React 19, TanStack Start and Supabase and connected to QuickBooks, Xero and Sage. Supplier invoices arrive in a mailbox, as phone photos of handwritten bills and as PDFs in cloud storage. GuardXFlow collects all of it in one queue, reads each document and files it to the accounting software once a person has approved it.",
-      "Nothing gets typed twice. Invoices are read out of the email or the photo (supplier, number, dates, totals, tax lines, line items) and arrive ready to check.",
-      "Duplicate payments are caught before approval, on graded evidence rather than a guess: an identical file, the same number and amount, or the same supplier and amount on the same day. When a supplier prints the customer’s account number where the invoice number belongs, that counts as evidence against a duplicate, because flagging those was burying real bills.",
-      "Two-person control where it matters: each company can require a second approval above an amount it sets. Several companies share one queue, each with its own fiscal year, currency and approval rules.",
-      "Bilingual and Québec-first: Quebecois French throughout, GST/QST, and figures read from the books rather than recalculated.",
-      "An assistant that cannot act on its own. Nicol answers in plain language, by voice or text, across every module and the connected ledger. It can offer to approve an invoice, but the offer counts only when the person presses a server-side confirmation card. Saying ‘yes’ in the chat confirms nothing.",
-      "The books stay the source of truth. The money logic lives in pure, tested modules (400+ assertions), and the AI never does the arithmetic.",
+    ["GuardXFlow: accounts payable on autopilot", [
+      "GuardXFlow is the accounts-payable system we built for a business in Québec. It collects every supplier invoice in one queue, reads it with AI and files it to the accounting software once a person has approved it. It is built with React 19, TanStack Start and Supabase, and connects to QuickBooks, Xero and Sage.",
+    ]],
+    ["The problem", [
+      "Supplier invoices came in from everywhere: a shared mailbox, phone photos of handwritten bills, and PDFs saved to cloud storage, often for several companies at once. Each one had to be typed into the books by hand:",
+      ["Supplier, invoice number and dates", "Totals and every tax line (GST and QST)", "Line items, one by one"],
+      "It was slow, easy to get wrong, and a duplicate could be paid twice if nobody noticed. The team needed the speed of AI without giving up control of the money.",
+    ]],
+    ["What we built", [
+      "One queue for every invoice, wherever it comes from, with AI doing the reading and people doing the approving.",
+      [
+        "Nothing typed twice: invoices are read out of the email or the photo (supplier, number, dates, totals, tax lines and line items) and arrive ready to check.",
+        "Duplicates caught before approval: on graded evidence rather than a guess, such as an identical file, the same number and amount, or the same supplier and amount on the same day.",
+        "Smart about real bills: when a supplier prints the customer’s account number where the invoice number belongs, that counts as evidence against a duplicate, so real bills are not buried in false alarms.",
+        "Two-person control: each company can require a second approval above an amount it sets.",
+        "Several companies, one queue: each with its own fiscal year, currency and approval rules.",
+        "Bilingual and Québec-first: Quebecois French throughout, GST and QST, and figures read from the books rather than recalculated.",
+      ],
+    ]],
+    ["Nicol, an assistant that cannot act on its own", [
+      "Nicol answers questions in plain language, by voice or by text, across every module and the connected ledger. It can offer to approve an invoice, but the offer counts only when the person presses a confirmation card on the server. Saying ‘yes’ in the chat confirms nothing, so the AI can help without ever moving money by itself.",
+    ]],
+    ["Built so the numbers are right", [
+      "The books stay the source of truth. All the money logic lives in pure, tested modules with more than 400 checks, and the AI never does the arithmetic. It reads and suggests; the code calculates and people decide.",
+    ]],
+    ["How the client benefits", [
+      [
+        "Time back: invoices arrive ready to check instead of being typed in, so checking replaces retyping.",
+        "No double payments: possible duplicates are flagged before anyone approves them.",
+        "Control stays with people: nothing reaches the books without a person, and large amounts need two.",
+        "One place for every company: all invoices in a single queue, each company with its own rules.",
+        "Works in their language and tax system: French and English, with GST and QST handled correctly.",
+        "Numbers they can trust: the figures come from the books and tested code, never from an AI guess.",
+      ],
+      "51 invoices have already gone through the AI inbox this way.",
+    ]],
+    ["Tech stack", [
+      "React 19, TanStack Start and Supabase, connected to QuickBooks, Xero and Sage. AI reads PDFs, Word files and phone photos, and Nicol works by voice or text. The money logic runs in tested modules, not in the AI.",
     ]],
   ]),
 ];

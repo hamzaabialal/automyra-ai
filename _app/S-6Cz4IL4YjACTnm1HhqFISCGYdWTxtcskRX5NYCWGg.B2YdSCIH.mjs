@@ -112,21 +112,53 @@ Agents that people trust enough to stop checking.
 
 The cover is GuardXFlow, an invoice tool we built around this idea. AI reads every invoice, whether a PDF, a Word file or a phone photo, and fills in the supplier, number, date, subtotal and taxes. Nothing reaches the books until a person ticks the box to confirm they have verified the extracted information.
 
-## What GuardXFlow does for the client
+## GuardXFlow: accounts payable on autopilot
 
-GuardXFlow is accounts-payable automation for a Québec business, built with React 19, TanStack Start and Supabase and connected to QuickBooks, Xero and Sage. Supplier invoices arrive in a mailbox, as phone photos of handwritten bills and as PDFs in cloud storage. GuardXFlow collects all of it in one queue, reads each document and files it to the accounting software once a person has approved it.
+GuardXFlow is the accounts-payable system we built for a business in Québec. It collects every supplier invoice in one queue, reads it with AI and files it to the accounting software once a person has approved it. It is built with React 19, TanStack Start and Supabase, and connects to QuickBooks, Xero and Sage.
 
-Nothing gets typed twice. Invoices are read out of the email or the photo (supplier, number, dates, totals, tax lines, line items) and arrive ready to check.
+## The problem
 
-Duplicate payments are caught before approval, on graded evidence rather than a guess: an identical file, the same number and amount, or the same supplier and amount on the same day. When a supplier prints the customer’s account number where the invoice number belongs, that counts as evidence against a duplicate, because flagging those was burying real bills.
+Supplier invoices came in from everywhere: a shared mailbox, phone photos of handwritten bills, and PDFs saved to cloud storage, often for several companies at once. Each one had to be typed into the books by hand:
 
-Two-person control where it matters: each company can require a second approval above an amount it sets. Several companies share one queue, each with its own fiscal year, currency and approval rules.
+- Supplier, invoice number and dates
+- Totals and every tax line (GST and QST)
+- Line items, one by one
 
-Bilingual and Québec-first: Quebecois French throughout, GST/QST, and figures read from the books rather than recalculated.
+It was slow, easy to get wrong, and a duplicate could be paid twice if nobody noticed. The team needed the speed of AI without giving up control of the money.
 
-An assistant that cannot act on its own. Nicol answers in plain language, by voice or text, across every module and the connected ledger. It can offer to approve an invoice, but the offer counts only when the person presses a server-side confirmation card. Saying ‘yes’ in the chat confirms nothing.
+## What we built
 
-The books stay the source of truth. The money logic lives in pure, tested modules (400+ assertions), and the AI never does the arithmetic.`,f6:`Muhammad Soban`,f7:`Aug 9, 2026`,img:`/assets/work/journal-guardrails.png`,n1:`3`}],team:[{slug:`nadia-rahman`,f1:`Muhammad Soban`,f2:`Business Manager · Lead AI Engineer`,f3:`Builds the AI agents, voice agents and n8n systems behind most of our projects. Top Rated, 100% Job Success.`,img:`/assets/team/soban.jpg`,n1:`1`},{slug:`kofi-mensah`,f1:`Hamza B.`,f2:`Business Manager`,f3:`Runs client projects from the first call to launch and keeps every build on scope. Top Rated, 100% Job Success.`,img:`/assets/team/hamza.jpg`,n1:`2`},{slug:`ingrid-solberg`,f1:`Mishaal A.`,f2:`Automation Engineer`,f3:`Builds n8n workflows and CRM automations across Zoho, Close and Kommo. Top Rated, 100% Job Success.`,img:`/assets/team-mishaal.svg`,n1:`3`},{slug:`mateo-alvarez`,f1:`Asma A.`,f2:`Automation Engineer`,f3:`Connects APIs, scrapers and data pipelines, and keeps them running. Top Rated on Upwork.`,img:`/assets/team-asma.svg`,n1:`4`}]},Be=`FcPost@cms1`,Ve=(e,t=`img`)=>String(e&&e[t]||``).split(`?`)[0],He=`data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20400%20500'%20preserveAspectRatio%3D'xMidYMid%20slice'%3E%3Crect%20width%3D'400'%20height%3D'500'%20fill%3D'%23D3D8E2'%2F%3E%3Crect%20x%3D'120'%20y%3D'170'%20width%3D'160'%20height%3D'160'%20rx%3D'8'%20fill%3D'none'%20stroke%3D'%23AEB6C6'%20stroke-width%3D'1.5'%2F%3E%3Crect%20x%3D'100'%20y%3D'150'%20width%3D'200'%20height%3D'200'%20rx%3D'10'%20fill%3D'none'%20stroke%3D'%23C3CAD8'%20stroke-width%3D'1'%20stroke-dasharray%3D'2%206'%2F%3E%3C%2Fsvg%3E`,X=(e,t=`img`)=>Ve(e,t)||He,Ue=o===void 0?g:r,We=`
+One queue for every invoice, wherever it comes from, with AI doing the reading and people doing the approving.
+
+- Nothing typed twice: invoices are read out of the email or the photo (supplier, number, dates, totals, tax lines and line items) and arrive ready to check.
+- Duplicates caught before approval: on graded evidence rather than a guess, such as an identical file, the same number and amount, or the same supplier and amount on the same day.
+- Smart about real bills: when a supplier prints the customer’s account number where the invoice number belongs, that counts as evidence against a duplicate, so real bills are not buried in false alarms.
+- Two-person control: each company can require a second approval above an amount it sets.
+- Several companies, one queue: each with its own fiscal year, currency and approval rules.
+- Bilingual and Québec-first: Quebecois French throughout, GST and QST, and figures read from the books rather than recalculated.
+
+## Nicol, an assistant that cannot act on its own
+
+Nicol answers questions in plain language, by voice or by text, across every module and the connected ledger. It can offer to approve an invoice, but the offer counts only when the person presses a confirmation card on the server. Saying ‘yes’ in the chat confirms nothing, so the AI can help without ever moving money by itself.
+
+## Built so the numbers are right
+
+The books stay the source of truth. All the money logic lives in pure, tested modules with more than 400 checks, and the AI never does the arithmetic. It reads and suggests; the code calculates and people decide.
+
+## How the client benefits
+
+- Time back: invoices arrive ready to check instead of being typed in, so checking replaces retyping.
+- No double payments: possible duplicates are flagged before anyone approves them.
+- Control stays with people: nothing reaches the books without a person, and large amounts need two.
+- One place for every company: all invoices in a single queue, each company with its own rules.
+- Works in their language and tax system: French and English, with GST and QST handled correctly.
+- Numbers they can trust: the figures come from the books and tested code, never from an AI guess.
+
+51 invoices have already gone through the AI inbox this way.
+
+## Tech stack
+
+React 19, TanStack Start and Supabase, connected to QuickBooks, Xero and Sage. AI reads PDFs, Word files and phone photos, and Nicol works by voice or text. The money logic runs in tested modules, not in the AI.`,f6:`Muhammad Soban`,f7:`Aug 9, 2026`,img:`/assets/work/journal-guardrails.png`,n1:`3`}],team:[{slug:`nadia-rahman`,f1:`Muhammad Soban`,f2:`Business Manager · Lead AI Engineer`,f3:`Builds the AI agents, voice agents and n8n systems behind most of our projects. Top Rated, 100% Job Success.`,img:`/assets/team/soban.jpg`,n1:`1`},{slug:`kofi-mensah`,f1:`Hamza B.`,f2:`Business Manager`,f3:`Runs client projects from the first call to launch and keeps every build on scope. Top Rated, 100% Job Success.`,img:`/assets/team/hamza.jpg`,n1:`2`},{slug:`ingrid-solberg`,f1:`Mishaal A.`,f2:`Automation Engineer`,f3:`Builds n8n workflows and CRM automations across Zoho, Close and Kommo. Top Rated, 100% Job Success.`,img:`/assets/team-mishaal.svg`,n1:`3`},{slug:`mateo-alvarez`,f1:`Asma A.`,f2:`Automation Engineer`,f3:`Connects APIs, scrapers and data pipelines, and keeps them running. Top Rated on Upwork.`,img:`/assets/team-asma.svg`,n1:`4`}]},Be=`FcPost@cms1`,Ve=(e,t=`img`)=>String(e&&e[t]||``).split(`?`)[0],He=`data:image/svg+xml;utf8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20400%20500'%20preserveAspectRatio%3D'xMidYMid%20slice'%3E%3Crect%20width%3D'400'%20height%3D'500'%20fill%3D'%23D3D8E2'%2F%3E%3Crect%20x%3D'120'%20y%3D'170'%20width%3D'160'%20height%3D'160'%20rx%3D'8'%20fill%3D'none'%20stroke%3D'%23AEB6C6'%20stroke-width%3D'1.5'%2F%3E%3Crect%20x%3D'100'%20y%3D'150'%20width%3D'200'%20height%3D'200'%20rx%3D'10'%20fill%3D'none'%20stroke%3D'%23C3CAD8'%20stroke-width%3D'1'%20stroke-dasharray%3D'2%206'%2F%3E%3C%2Fsvg%3E`,X=(e,t=`img`)=>Ve(e,t)||He,Ue=o===void 0?g:r,We=`
 .fcpo{position:relative;background:var(--fc-bone);color:var(--fc-ink);padding:clamp(140px,16vh,190px) 0 clamp(90px,10vw,150px)}
 .fcpo-prog{position:fixed;left:0;right:0;top:0;z-index:1200;height:3px;pointer-events:none} .fcpo-prog span{display:block;height:100%;background:var(--fc-brass);transform:scaleX(0);transform-origin:0 50%;box-shadow:0 0 12px var(--fc-brass)}
 .fcpo-cr ol{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0 0 24px;padding:0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--fc-mut)} .fcpo-cr li+li::before{content:"/";margin-right:8px;opacity:.5} .fcpo-cr a{color:inherit;text-decoration:none}
