@@ -731,6 +731,10 @@ const CASE_EXTRA = {
     "Hostyo CRM",
     "We also built and maintain a custom CRM for Hostyo, a short-term rental property management company in Cyprus. It brings their entire sales process into one place: Facebook ad leads flow in automatically, agents call owners directly from the CRM, and every call is recorded, transcribed in Greek or English, and summarised by AI. The team can message owners on WhatsApp, book meetings synced with Google Calendar, send contracts for e-signature in English and Greek, and chat internally with mobile notifications. Automated workflows and health alerts keep everything running smoothly, so Hostyo's team spends less time on admin and more time signing new properties.",
   ],
+  "rabbit-funding": [
+    "Lead generation & sales pipeline",
+    "We also automated the rest of Rabbit Funding's sales pipeline, end to end, on n8n with Apify, LinkedIn, OpenAI, Close CRM, Jotform and Zoho Sign. Apify researches prospects on LinkedIn and extracts their data, OpenAI studies each prospect and writes a personal outreach message, and every lead is created and kept in sync in Close CRM. Applications come in through Jotform, and the documents are generated and sent for e-signature in Zoho Sign. APIs and webhooks connect it all, so the path from finding a prospect to a signed document runs without manual work.",
+  ],
   "signal-law-group": [
     "Research automation",
     "We also automated the firm's research and publishing on Make.com. A company name goes in, and GPT with live web search researches it, scores the risk and produces a full investigation: article, press release, cover image, PDF and a 60-second AI news-anchor video. Once approved, it is published on WordPress and sent to 226 publisher outlets. Every 12 hours the system checks SEC EDGAR for new proxy statements and drafts a voting recommendation that an analyst reviews within 48 hours. The team now covers far more companies, never misses a filing, and nothing goes public without a person signing off.",
@@ -742,6 +746,28 @@ const caseExtraHtml = (slug) =>
   "</p><p class=\"fccs-txt\" style=\"font-family:var(--fc-font-d, 'Geist'), Inter, -apple-system, Arial, sans-serif;font-weight:var(--fc-font-dw, 500);font-style:normal\">" +
   CASE_EXTRA[slug][1].replace(/&/g, "&amp;").replace(/'/g, "&#x27;") + "</p></div>";
 const CASE_LAB_STYLE = "font-family:var(--fc-font-m, 'IBM Plex Mono'), ui-monospace, SFMono-Regular, Menlo, monospace;font-weight:var(--fc-font-mw, 400)";
+
+// Workflow automation service page: the construction company build behind the Closing Date Watcher (the Services menu card
+// links here), shown before "Other services" [heading, screenshot alt, paragraphs]
+const SERVICE_EXTRA = {
+  slug: "workflow-automation",
+  title: "Also in production: Zoho CRM automation for a construction company",
+  img: "/assets/work/closing-date-watcher.jpg",
+  alt: "Closing Date Watcher workflow in n8n",
+  ps: [
+    "The Closing Date Watcher in the screenshot is one part of a larger system we built for a construction company on Zoho CRM, Google Sheets and n8n. Every day it checks each project’s closing date, updates the tasks and emails the team.",
+    "Tasks are created and assigned on their own from incoming records, project activity and operational needs. Inventory stays in sync between Zoho CRM and Google Sheets, a daily check finds shortages, and low-stock alerts go out in time to restock before work stops.",
+    "Invoices are generated and sent to clients from the related inventory and transactions. Daily and weekly reports cover inventory, operations and business performance, and scheduled workflows watch the system and act on set business rules.",
+    "The result: tasks, inventory, client invoicing, stock alerts and recurring reports in one connected system, with far less manual data entry and more accurate data.",
+  ],
+};
+const SERVICE_EXTRA_CSS =
+  ".fcsv-x{margin:clamp(60px,7vw,110px) 0 0}.fcsv-x img{display:block;width:100%;height:auto;margin:0 0 28px;border-radius:24px;background:#0b0f0e}" +
+  ".fcsv-x p{margin:0 0 18px;max-width:820px;font-size:18px;line-height:1.65;color:var(--fc-mut)}";
+const DISPLAY_STYLE = "font-family:var(--fc-font-d, 'Geist'), Inter, -apple-system, Arial, sans-serif;font-weight:var(--fc-font-dw, 500);font-style:normal";
+const serviceExtraHtml = () =>
+  '<div class="fcsv-x"><h2 class="fcsv-h" style="' + DISPLAY_STYLE + '">' + SERVICE_EXTRA.title + '</h2><img src="' + SERVICE_EXTRA.img +
+  '" alt="' + SERVICE_EXTRA.alt + '" loading="lazy" decoding="async">' + SERVICE_EXTRA.ps.map((p) => "<p>" + p + "</p>").join("") + "</div>";
 
 // Site colours. The template ships emerald (#19d98b) on green-black; each entry swaps those values everywhere
 const PALETTES = {
@@ -780,6 +806,12 @@ const headGradient = (p) => {
 };
 
 export const rules = [
+  // Workflow automation service page: the construction company section from SERVICE_EXTRA (t is the page slug)
+  ["L.length>0&&u(`div`,{className:`fcsv-others`",
+    "t===`" + SERVICE_EXTRA.slug + "`&&u(`div`,{className:`fcsv-x`,children:[d(`h2`,{className:`fcsv-h`,style:_,children:" + JSON.stringify(SERVICE_EXTRA.title) +
+    "}),d(`img`,{src:`" + SERVICE_EXTRA.img + "`,alt:`" + SERVICE_EXTRA.alt + "`,loading:`lazy`,decoding:`async`})," +
+    SERVICE_EXTRA.ps.map((p) => "d(`p`,{children:" + JSON.stringify(p) + "})").join(",") + "]}),L.length>0&&u(`div`,{className:`fcsv-others`"],
+  [".fcsv-det{margin:0 0 clamp(60px,7vw,110px);", SERVICE_EXTRA_CSS + ".fcsv-det{margin:0 0 clamp(60px,7vw,110px);"],
   // Case pages: render the extra chapter from CASE_EXTRA
   [
     "d(`dd`,{children:d(`span`,{children:E.f13})})]})]})]})]}),",
@@ -982,6 +1014,8 @@ export const html = [
   ...ssr,
   // Case pages: the extra chapter in the server-rendered HTML too (matched by each case's original "What we built" text)
   [/(A support agent on chat and email that answers from Shopify[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("hostyo"), "hostyo extra chapter"],
+  [/(In production<!-- --> · <!-- -->Ledgerly<\/span>[\s\S]*?<\/a><\/div><\/div>)(?=<div class="fcsv-others">)/g, "$1" + serviceExtraHtml(), "workflow extra section"],
+  [/(An invoice agent that reads every document, matches it to purchase orders[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("rabbit-funding"), "rabbit extra chapter"],
   [/(A private, permission-aware knowledge base that answers in plain words[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("signal-law-group"), "signal extra chapter"],
   // Screenshots have one size: no srcset, or the server-rendered one sticks when the image changes (e.g. the Services menu)
   [new RegExp(` srcset="${IMG.replace(/[./]/g, "\\$&")}(?:${Object.keys(SHOTS).join("|")})\\.webp[^"]*"`, "g"), "", "screenshot srcset"],
