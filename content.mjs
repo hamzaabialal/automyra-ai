@@ -464,7 +464,7 @@ const sitewide = [
     "Connects agents to CRMs, help desks and finance tools without breaking them.":
       "Connects APIs, scrapers and data pipelines, and keeps them running. Top Rated on Upwork.",
   }),
-  [IMG + "msSr3aFiYWr5AeW5HFJveqW8Ikw.webp", "/assets/team-soban.svg"],
+  [IMG + "msSr3aFiYWr5AeW5HFJveqW8Ikw.webp", "/assets/team/soban.jpg"],
   [IMG + "KlxBQZf0VdDz9LZ380WbtBGW4.webp", "/assets/team/hamza.jpg"],
   // Real photos are tall portraits: keep the face in the 3:4 frame
   [".fcab-tp{position:relative;display:block;aspect-ratio:3/4;", ".fcab-tp img[src^=\"/assets/team/\"]{object-position:50% 12%}.fcab-tp{position:relative;display:block;aspect-ratio:3/4;", "team photo position"],
@@ -757,6 +757,104 @@ const caseExtraHtml = (slug) =>
   CASE_EXTRA[slug][1].replace(/&/g, "&amp;").replace(/'/g, "&#x27;") + "</p></div>";
 const CASE_LAB_STYLE = "font-family:var(--fc-font-m, 'IBM Plex Mono'), ui-monospace, SFMono-Regular, Menlo, monospace;font-weight:var(--fc-font-mw, 400)";
 
+// Case pages written as an article: chapters 01-03 get readable text with headings and lists in place of one large
+// paragraph, and chapter 04 closes with the results. Blocks: "text" is a paragraph, [..] a list, {title} the main heading, {h} a subheading, {lead} an intro
+const CASE_ARTICLE = {
+  hostyo: {
+    chapters: {
+      1: [
+        { title: "Hostyo" },
+        { lead: "Hostyo manages short-term rentals in Cyprus. Owners hand over their apartments and villas, and Hostyo runs the rest: listings on Airbnb and Booking.com, guests, cleaning, maintenance and the money." },
+        "As the portfolio grew, so did the questions. Owner updates lived in spreadsheets and long email threads, and every owner wanted the same few answers:",
+        ["How much did I earn this month?", "When is my next payout?", "What did cleaning and maintenance cost?", "Who is arriving next week?"],
+        "The team answered each one by hand, many times a week, checking several sheets against the booking platforms. The more properties Hostyo signed, the more time went to answering questions instead of growing the business.",
+      ],
+      2: [
+        { h: "One portal for every owner" },
+        "A React owner portal on Vercel, with Notion as the data layer. Hostyo's team keeps working in Notion as before, and the portal turns those records into a clean dashboard for each owner.",
+        [
+          "Home dashboard (in the screenshot above): balance, payouts, expenses and a forecast for the months ahead.",
+          "Next arrivals: upcoming guests from Airbnb and Booking.com, for each property.",
+          "Finances: every payout and expense, month by month, with the statements behind them.",
+          "Private access: each owner signs in and sees only their own properties, bookings and statements.",
+        ],
+        "From kickoff to a live portal took four weeks. Owners now check the portal instead of writing an email, at any time of day.",
+      ],
+      3: [
+        { h: "The whole sales process in one place" },
+        "After the portal, we built, and still maintain, a custom CRM for Hostyo's sales team, where new properties come from.",
+        [
+          "Leads from Facebook ads flow in on their own, ready to call.",
+          "Agents call owners straight from the CRM. Every call is recorded, transcribed in Greek or English and summarised by AI.",
+          "WhatsApp messages, meetings synced with Google Calendar, and contracts sent for e-signature in English and Greek, all from the lead's record.",
+          "Internal chat with mobile notifications, so no hand-off gets missed.",
+          "Automated workflows and health alerts keep it all running without anyone watching it.",
+        ],
+      ],
+    },
+    // Chapter 04
+    label: "The result",
+    title: "What changed for Hostyo",
+    lead: "Owners get their answers the moment they want them, and the team no longer spends hours a week repeating them. Sales has one place for every lead, call and contract, so Hostyo's people spend less time on admin and more on signing new properties.",
+    facts: [["4 weeks", "kickoff to live portal"], ["33", "properties on the portal"], ["24/7", "owner self-service"], ["5.0★", "client rating"]],
+    sections: [
+      ["How Hostyo benefits", [
+        "The portal and the CRM changed the day-to-day for Hostyo's owners, its team and its sales.",
+        [
+          "Owners help themselves: earnings, payouts, expenses and upcoming guests are in the portal around the clock, so far fewer emails and calls reach the team.",
+          "Time back for the team: nobody puts together the same numbers by hand anymore, and that time now goes to signing new properties.",
+          "More trust from owners: each owner sees their own figures straight from Hostyo's records, which makes the relationship clearer and easier to keep.",
+          "Faster sales: leads arrive on their own, every call is recorded and summarised, and contracts are signed online in English or Greek, so a new property can be signed sooner.",
+          "Nothing slips through: workflows, health alerts and mobile notifications flag what needs attention before it becomes a problem.",
+          "Room to grow: with 33 properties already on the portal, Hostyo can take on more without the admin growing at the same pace.",
+        ],
+      ]],
+      ["How we worked", [
+        "We started with the work, not the screens: which questions owners ask, where each answer lives and who keeps it up to date. That shaped the data model in Notion before any code was written. Then we built the dashboard, added private access for each owner and tested with real owner accounts before launch. After launch we kept working with Hostyo, and that is how the CRM came about.",
+      ]],
+    ],
+    quote: ["Perfect work, highly recommended for custom coding solutions!", "Andreas, Hostyo · Upwork review, 5.0★"],
+    stack: "Owner portal: React, Vercel and Notion, with booking data from Airbnb and Booking.com. CRM: call recording, AI transcription and summaries in Greek and English, WhatsApp, Google Calendar and e-signature.",
+  },
+};
+// Element trees (rendered by flowHtml and flowJs)
+const articleBlock = (b) =>
+  typeof b === "string" ? ["p", "", [b]] : Array.isArray(b) ? ["ul", "", b.map((li) => ["li", "", [li]])] : b.title ? ["h2", "", [b.title]] : b.h ? ["h3", "", [b.h]] : ["p", "fcar-lead", [b.lead]];
+// Chapter n's text, in place of the large paragraph
+const chapterTree = (slug, n) => ["div", "fcar fcar-ch", CASE_ARTICLE[slug].chapters[n].map(articleBlock)];
+// JS for chapter n: the article text on pages that have it, otherwise the original paragraph (fallback)
+const articleChapterJs = (n, fallback) =>
+  Object.keys(CASE_ARTICLE).map((s) => "E.slug===`" + s + "`?" + flowJs("u", "d", chapterTree(s, n)) + ":").join("") + fallback;
+// Chapter 04
+const articleTree = (slug) => {
+  const a = CASE_ARTICLE[slug];
+  return ["div", "fccs-ch", [
+    ["p", "fccs-lab fcar-l", [["em", "", ["04"]], a.label]],
+    ["article", "fcar", [
+      ["h2", "", [a.title]],
+      ["p", "fcar-lead", [a.lead]],
+      ["dl", "fcar-facts", a.facts.map(([v, l]) => ["div", "", [["dt", "", [v]], ["dd", "", [l]]]])],
+      ...a.sections.flatMap(([h, blocks]) => [["h3", "", [h]], ...blocks.map(articleBlock)]),
+      ["blockquote", "", [["p", "", ["“" + a.quote[0] + "”"]], ["cite", "", [a.quote[1]]]]],
+      ["h3", "", ["Tech stack"]],
+      ["p", "", [a.stack]],
+    ]],
+  ]];
+};
+const ARTICLE_CSS =
+  ".fccs-lab.fcar-l{font-family:var(--fc-font-m,'IBM Plex Mono'),ui-monospace,monospace}" +
+  ".fcar.fcar-ch>h2{font-weight:700;letter-spacing:-.04em}.fcar-ch>h3:first-child{margin-top:0}.fcar-ch>:last-child{margin-bottom:0}.fcar{max-width:760px}.fcar-eb{margin:0 0 14px;font:500 12px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:color-mix(in srgb,var(--fc-brass) 70%,var(--fc-ink))}" +
+  ".fcar h2{margin:0 0 20px;font-size:clamp(30px,3vw,48px);font-weight:500;letter-spacing:-.035em;line-height:1.08;text-wrap:balance}" +
+  ".fcar-lead{margin:0 0 28px;font-size:clamp(19px,1.5vw,22px);line-height:1.6}" +
+  ".fcar-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 8px}.fcar-facts div{padding:16px 18px;border-radius:16px;background:color-mix(in srgb,var(--fc-ink) 5%,transparent)}" +
+  ".fcar-facts dt{font-size:26px;font-weight:500;letter-spacing:-.03em}.fcar-facts dd{margin:4px 0 0;font-size:13px;line-height:1.35;color:var(--fc-mut)}" +
+  ".fcar h3{margin:44px 0 12px;font-size:clamp(21px,1.7vw,26px);font-weight:600;letter-spacing:-.02em;line-height:1.2}" +
+  ".fcar p,.fcar li{font-size:17.5px;line-height:1.75;color:color-mix(in srgb,var(--fc-ink) 80%,transparent)}.fcar p{margin:0 0 16px}" +
+  ".fcar ul{margin:0 0 18px;padding-left:22px}.fcar li{margin:8px 0;padding-left:4px}.fcar li::marker{color:var(--fc-brass)}" +
+  ".fcar blockquote{margin:32px 0 0;padding:22px 26px;border-left:3px solid var(--fc-brass);border-radius:0 16px 16px 0;background:color-mix(in srgb,var(--fc-ink) 5%,transparent)}" +
+  ".fcar blockquote p{margin:0;font-size:21px;line-height:1.5;color:var(--fc-ink)}.fcar cite{display:block;margin-top:10px;font:500 12px/1.4 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;font-style:normal;color:var(--fc-mut)}" +
+  "@media (max-width:809.98px){.fcar-facts{grid-template-columns:1fr 1fr}}";
+
 // Workflow automation service page: the construction company build behind the Closing Date Watcher (the Services menu card
 // links here), shown before "Other services" [heading, screenshot alt, paragraphs]
 const SERVICE_EXTRA = {
@@ -965,7 +1063,7 @@ const THEME_CSS =
   "background:rgba(10,16,20,.82);color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 10px 30px -10px rgba(0,0,0,.6);transition:transform .3s}" +
   ".am-theme:hover{transform:scale(1.08)}.am-theme svg{width:20px;height:20px}";
 const EXTRA_HEAD =
-  "<style>" + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
+  "<style>" + ARTICLE_CSS + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
   (FEATURES.theme ? "<script>try{var t=localStorage.getItem('am-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script>" : "");
 const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M1.5 12H4M20 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>';
@@ -1035,11 +1133,16 @@ export const rules = [
     "}),d(`img`,{src:`" + SERVICE_EXTRA.img + "`,alt:`" + SERVICE_EXTRA.alt + "`,loading:`lazy`,decoding:`async`})," +
     SERVICE_EXTRA.ps.map((p) => "d(`p`,{children:" + JSON.stringify(p) + "})").join(",") + "]}),L.length>0&&u(`div`,{className:`fcsv-others`"],
   [".fcsv-det{margin:0 0 clamp(60px,7vw,110px);", SERVICE_EXTRA_CSS + ".fcsv-det{margin:0 0 clamp(60px,7vw,110px);"],
-  // Case pages: render the extra chapter from CASE_EXTRA
+  // Case pages written as an article (CASE_ARTICLE): chapters 01 and 02 take its text in place of the large paragraph
+  ["d(`p`,{className:`fccs-txt`,style:_,children:E.f8})", "(" + articleChapterJs(1, "d(`p`,{className:`fccs-txt`,style:_,children:E.f8})") + ")"],
+  ["d(`p`,{className:`fccs-txt`,style:_,children:E.f9})", "(" + articleChapterJs(2, "d(`p`,{className:`fccs-txt`,style:_,children:E.f9})") + ")"],
+  // Case pages: render the extra chapter from CASE_EXTRA (its text from CASE_ARTICLE where there is one), then chapter 04
   [
     "d(`dd`,{children:d(`span`,{children:E.f13})})]})]})]})]}),",
     "d(`dd`,{children:d(`span`,{children:E.f13})})]})]})]})]})," +
-      "(" + JSON.stringify(CASE_EXTRA) + ")[E.slug]&&u(`div`,{className:`fccs-ch`,children:[u(`p`,{className:`fccs-lab`,style:y,children:[d(`em`,{children:`03`}),(" + JSON.stringify(CASE_EXTRA) + ")[E.slug][0]]}),d(`p`,{className:`fccs-txt`,style:_,children:(" + JSON.stringify(CASE_EXTRA) + ")[E.slug][1]})]}),",
+      "(" + JSON.stringify(CASE_EXTRA) + ")[E.slug]&&u(`div`,{className:`fccs-ch`,children:[u(`p`,{className:`fccs-lab`,style:y,children:[d(`em`,{children:`03`}),(" + JSON.stringify(CASE_EXTRA) + ")[E.slug][0]]})," +
+      "(" + articleChapterJs(3, "d(`p`,{className:`fccs-txt`,style:_,children:(" + JSON.stringify(CASE_EXTRA) + ")[E.slug][1]})") + ")]})," +
+      Object.keys(CASE_ARTICLE).map((s) => "E.slug===`" + s + "`&&" + flowJs("u", "d", articleTree(s)) + ",").join(""),
   ],
   ...sitewide,
 
@@ -1155,6 +1258,10 @@ export const rules = [
   // Server-rendered tool strip and tool pills (last, so the tool names are already the site's)
   ...(FEATURES.flow || FEATURES.strip ? [[/(class="fc fcl fc-dark[^"]*"[\s\S]*?<ul class="fc-sr">[\s\S]*?<\/ul>)/g,
     (m) => m + (FEATURES.flow ? flowHtml() : "") + (FEATURES.strip ? toolStripHtml() : ""), "tool strip html"]] : []),
+  // Server-rendered Hostyo chapters 01-03 as article text (matched by their paragraphs)
+  [/<p class="fccs-txt"[^>]*>Owner updates lived in spreadsheets[^<]*<\/p>/g, () => flowHtml(chapterTree("hostyo", 1)), "hostyo chapter 1"],
+  [/<p class="fccs-txt"[^>]*>A React owner portal on Vercel[^<]*<\/p>/g, () => flowHtml(chapterTree("hostyo", 2)), "hostyo chapter 2"],
+  [/<p class="fccs-txt"[^>]*>We also built and maintain a custom CRM for Hostyo[^<]*<\/p>/g, () => flowHtml(chapterTree("hostyo", 3)), "hostyo chapter 3"],
   ...(FEATURES.pills ? [
     [/(>Tools<\/dt><dd>)([\s\S]*?)(<\/dd>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "case tool pills html"],
     [/(<div class="fcsv-tools"[^>]*>)([\s\S]*?)(<\/div>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "service tool pills html"],
@@ -1247,7 +1354,7 @@ export const html = [
   ["</head>", EXTRA_HEAD + "</head>", "extras head"],
   ...(FEATURES.theme ? [["</body>", THEME_BUTTON + "</body>", "theme button"]] : []),
   // Case pages: the extra chapter in the server-rendered HTML too (matched by each case's original "What we built" text)
-  [/(A support agent on chat and email that answers from Shopify[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("hostyo"), "hostyo extra chapter"],
+  [/(A support agent on chat and email that answers from Shopify[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("hostyo") + flowHtml(articleTree("hostyo")), "hostyo extra chapter"],
   [/(In production<!-- --> · <!-- -->Ledgerly<\/span>[\s\S]*?<\/a><\/div><\/div>)(?=<div class="fcsv-others">)/g, "$1" + serviceExtraHtml(), "workflow extra section"],
   [/(A voice agent that answers in the clinic[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("ai-voice-agent"), "voice extra chapter"],
   [/(A lead agent that replies within a minute, qualifies the buyer[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("centris"), "centris extra chapter"],
