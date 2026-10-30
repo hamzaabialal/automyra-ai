@@ -905,6 +905,187 @@ const CASE_ARTICLE = {
     quote: ["He quickly understood the requirements, communicated clearly throughout the project, and delivered a solution that was both reliable and well designed.", "Upwork client · 5.0★ review"],
     stack: "Filing tools: React and OpenAI, reading SEC Schedule 14A filings from EDGAR. Research and publishing: Make.com, GPT with live web search, HeyGen for AI video, WordPress and 226 publisher outlets. Signal Ledger: timestamps and SHA fingerprints, checked against 8-K vote results.",
   },
+  "rabbit-funding": {
+    chapters: {
+      1: [
+        { title: "Rabbit Funding" },
+        { lead: "Rabbit Funding provides merchant cash advances (MCA) to small businesses. Its sales team works in Close CRM, and in funding, speed matters." },
+        "New leads came in all day, and reps worked them in the order they arrived:",
+        [
+          "The best-fit merchants waited in line behind poor fits.",
+          "Each lead had to be researched by hand before a call.",
+          "LinkedIn outreach was written and sent one message at a time.",
+          "Applications and contracts moved between separate tools.",
+        ],
+        "Reps spent their best hours on the wrong leads, and good merchants went cold while they waited.",
+      ],
+      2: [
+        { h: "Every lead scored before the first call" },
+        "An n8n system that works on every new lead in Close CRM within minutes of it arriving.",
+        [
+          "Enriched: missing details about the business are filled in.",
+          "Classified by industry and revenue.",
+          "Scored in Close CRM, so the strongest merchants are at the top of the list.",
+          "Call reminders at 15 and 2 minutes, so reps call at the right moment.",
+          "LinkedIn outreach (in the screenshot above): on a schedule, n8n collects everyone who liked or commented on recent posts, checks a Google Sheet for earlier contact, has Groq write the right message (a first DM, a deepen, a convert or a follow-up), sends it and logs the date back to the sheet.",
+        ],
+      ],
+      3: [
+        { h: "From LinkedIn prospect to signed contract" },
+        "We also automated the rest of the pipeline on n8n, with Apify, OpenAI, Close CRM, Jotform and Zoho Sign.",
+        [
+          "Apify researches prospects on LinkedIn and extracts their data.",
+          "OpenAI studies each prospect and writes a personal outreach message.",
+          "Every lead is created and kept in sync in Close CRM.",
+          "Applications come in through Jotform.",
+          "Documents are generated and sent for e-signature in Zoho Sign.",
+          "APIs and webhooks connect it all, with no copying between tools.",
+        ],
+      ],
+    },
+    label: "The result",
+    title: "What changed for Rabbit Funding",
+    lead: "Every new lead now has a score before a rep picks up the phone, and the path from finding a prospect to a signed contract runs on its own.",
+    facts: [["100%", "of new leads scored"], ["< 5 min", "new lead to score"], ["6 h", "saved per rep weekly"], ["24/7", "running"]],
+    sections: [
+      ["How Rabbit Funding benefits", [
+        "The sales team spends its time on calls that are likely to close.",
+        [
+          "Best leads first: reps call the strongest merchants first, while they are still interested.",
+          "Calls at the right moment: reminders at 15 and 2 minutes keep follow-up fast.",
+          "Hours back: about 6 hours per rep each week that used to go to research and sorting.",
+          "Outreach that scales: personal LinkedIn messages without writing each one by hand, and nobody is contacted twice by mistake.",
+          "Faster from application to signature: Jotform and Zoho Sign take the paperwork out of email.",
+          "One source of truth: Close CRM is always up to date.",
+        ],
+      ]],
+      ["How we worked", [
+        "We started with the sales process: what makes a good merchant, what reps check before a call and when they call. Those rules became the scoring in n8n, which we checked on real leads with the team before switching it on. Then we built the outreach and the application-to-signature steps around it.",
+      ]],
+    ],
+    quote: ["He exceeded expectations with his dedication and attention to detail. The project was completed flawlessly.", "Upwork client · 5.0★ review"],
+    stack: "n8n, Close CRM, OpenAI and Groq for scoring and messages, Google Sheets for outreach history, Apify for LinkedIn research, Jotform for applications and Zoho Sign for e-signatures.",
+  },
+  centris: {
+    chapters: {
+      1: [
+        { title: "Centris Model" },
+        { lead: "Our client invests in real estate in Québec and studies listings from Centris, the province's main property listing site. Every promising listing needs a full financial model before a decision." },
+        "Analysts built those models by hand, one property at a time:",
+        [
+          "Listing details copied from Centris into a spreadsheet.",
+          "Rent rolls, costs and financing typed into each tab.",
+          "Time spent copying instead of analysing.",
+        ],
+        "The team could only model a handful of listings, so good deals were easy to miss.",
+      ],
+      2: [
+        { h: "From listing to financial model in under two minutes" },
+        "A Python scraper and API pipeline, orchestrated in n8n, pulls Centris listings, cleans the data and fills the financial model for each property.",
+        [
+          "The scraper pulls hundreds of listings in each run.",
+          "The data is cleaned and checked before it is used.",
+          "AI prepares the analysis, split by sheet.",
+          "The n8n flow in the screenshot above builds each model: it copies the model template in Google Drive and appends the general info, financing, residential and commercial rent rolls, capital expenses, costs and qualitative analysis.",
+          "The finished model is posted to Slack, and the whole thing refreshes daily.",
+        ],
+      ],
+      3: [
+        { h: "Email attachments turned into clean data" },
+        "We also built an AI document workflow in n8n that reads email attachments of every kind.",
+        [
+          "Each attachment is detected and sorted by MIME type.",
+          "PDFs, images and Word files go down the pipeline that suits them.",
+          "AI reads each document in context and pulls out the key fields, dates, names, amounts and references.",
+          "Anyone can ask a question about an uploaded document and get the answer from it.",
+          "Each attachment gets its own Google Sheet with the extracted data.",
+        ],
+      ],
+    },
+    label: "The result",
+    title: "What changed",
+    lead: "Listings go from Centris to a finished financial model in under two minutes, with no copy-paste, and documents that arrive by email turn into structured, searchable data on their own.",
+    facts: [["< 2 min", "listing to model"], ["100s", "of listings per run"], ["0", "manual copy-paste"], ["Daily", "automatic refresh"]],
+    sections: [
+      ["How the client benefits", [
+        "The team now spends its time judging deals instead of building spreadsheets.",
+        [
+          "More deals reviewed: hundreds of listings per run instead of a handful by hand.",
+          "Faster decisions: a full model is ready in under two minutes.",
+          "No copy errors: figures go straight from the listing into the model.",
+          "Always current: listings refresh every day on their own.",
+          "Everyone in the loop: each finished model is posted to Slack.",
+          "Documents that answer questions: email attachments become searchable data, one sheet each.",
+        ],
+      ]],
+      ["How we worked", [
+        "We started from the client's own spreadsheet model, so the output looks exactly like the models the team already trusted. Then we built the scraper and the n8n flow to fill each tab, checked the first results with the team, and added the daily refresh and the Slack posting.",
+      ]],
+    ],
+    quote: ["Always a pleasure to work with and will do it again in the future!", "Upwork client · 5.0★ review"],
+    stack: "Python scraper and API, n8n, Google Sheets and Google Drive, AI for the analysis and document reading, and Slack for delivery.",
+  },
+  "ai-voice-agent": {
+    chapters: {
+      1: [
+        { title: "AI Call Desk" },
+        { lead: "A small business that runs on phone calls. Every caller is a possible customer, but the team cannot pick up every time." },
+        "Calls after hours and in busy periods went to voicemail, and most of those callers never called back:",
+        [
+          "Missed calls after hours and at peak times.",
+          "Callers qualified by hand, if at all.",
+          "Follow-ups written one by one.",
+          "Lead status scattered across sheets and the CRM.",
+        ],
+        "Every missed call was a customer lost to someone who answered.",
+      ],
+      2: [
+        { h: "A voice agent that answers every call" },
+        "Built on Vapi, Retell and Twilio, with a natural ElevenLabs voice.",
+        [
+          "Answers every call, day and night.",
+          "Qualifies the caller and books the appointment.",
+          "Hands anything unusual to a person.",
+          "Sends a summary of each call to the CRM.",
+          "The Zapier follow-up in the screenshot above: each new row in Google Sheets is filtered and sorted by call outcome (already completed, ready to award, interested or not ready yet), gets the matching Gmail follow-up, is logged in Zoho CRM and then moves to the year's archive sheet.",
+        ],
+      ],
+      3: [
+        { h: "AI calls for every new lead" },
+        "We also built a lead generation and calling system on Zapier that puts AI voice agents to work on every new lead.",
+        [
+          "Leads are captured from several sources and synced to the CRM.",
+          "They are qualified and sorted on their own.",
+          "An AI calling agent phones each new lead, starts the conversation and collects the details that matter.",
+          "Every outcome (answered, missed, interested or asked for a callback) is written to the CRM with the conversation history.",
+          "Automatic follow-ups for leads who did not pick up or need more time, with rules that stop duplicate calls.",
+          "When a person needs to step in, the sales rep gets a notification and a task.",
+        ],
+      ],
+    },
+    label: "The result",
+    title: "What changed",
+    lead: "Every call is answered, day and night, and every new lead gets a call and the right follow-up without anyone dialling.",
+    facts: [["24/7", "calls answered"], ["0", "missed calls after hours"], ["4", "call outcomes sorted"], ["5.0★", "client rating"]],
+    sections: [
+      ["How the client benefits", [
+        "The phone stopped being a bottleneck for the business.",
+        [
+          "No missed customers: every call is answered, even after hours.",
+          "Faster response: new leads get a call within minutes of arriving.",
+          "Time back for the team: nobody has to dial every lead or write each follow-up.",
+          "Consistent follow-up: the right message for each outcome, and no duplicate calls.",
+          "A clean CRM: every call, outcome and conversation is on the lead's record.",
+          "People where it matters: unusual calls and hot leads go straight to a person.",
+        ],
+      ]],
+      ["How we worked", [
+        "We wrote the call flow with the client first: what to ask, when to book and when to hand over to a person. We tuned the voice and the questions on test calls before going live, then connected the outcomes to Zapier, Google Sheets, Gmail and the CRM.",
+      ]],
+    ],
+    quote: ["He developed a custom AI solution for my business that streamlined several manual processes and delivered exactly what we were looking for.", "Upwork client · 5.0★ review"],
+    stack: "Voice: Vapi, Retell, Twilio and ElevenLabs. Follow-up: Zapier, Google Sheets, Gmail and Zoho CRM.",
+  },
 };
 // Element trees (rendered by flowHtml and flowJs)
 const articleBlock = (b) =>
@@ -945,26 +1126,47 @@ const ARTICLE_CSS =
   "@media (max-width:809.98px){.fcar-facts{grid-template-columns:1fr 1fr}}";
 
 // Workflow automation service page: the construction company build behind the Closing Date Watcher (the Services menu card
-// links here), shown before "Other services" [heading, screenshot alt, paragraphs]
+// links here), shown before "Other services" [heading, screenshot alt, article blocks as in CASE_ARTICLE]
 const SERVICE_EXTRA = {
   slug: "workflow-automation",
   title: "Also in production: Zoho CRM automation for a construction company",
   img: "/assets/work/closing-date-watcher.jpg",
   alt: "Closing Date Watcher workflow in n8n",
-  ps: [
-    "The Closing Date Watcher in the screenshot is one part of a larger system we built for a construction company on Zoho CRM, Google Sheets and n8n. Every day it checks each project’s closing date, updates the tasks and emails the team.",
-    "Tasks are created and assigned on their own from incoming records, project activity and operational needs. Inventory stays in sync between Zoho CRM and Google Sheets, a daily check finds shortages, and low-stock alerts go out in time to restock before work stops.",
-    "Invoices are generated and sent to clients from the related inventory and transactions. Daily and weekly reports cover inventory, operations and business performance, and scheduled workflows watch the system and act on set business rules.",
-    "The result: tasks, inventory, client invoicing, stock alerts and recurring reports in one connected system, with far less manual data entry and more accurate data.",
+  blocks: [
+    { lead: "The Closing Date Watcher in the screenshot is one part of a larger system we built for a construction company on Zoho CRM, Google Sheets and n8n." },
+    { h: "The problem" },
+    "Tasks, stock levels, client invoices and reports were all kept up to date by hand across Zoho CRM and spreadsheets. That meant a lot of data entry, numbers that did not always match, and shortages that were only noticed once they slowed the work down.",
+    { h: "What the system does" },
+    [
+      "Closing Date Watcher: every day it checks each project’s closing date, updates the tasks and emails the team.",
+      "Tasks are created and assigned on their own from incoming records, project activity and operational needs.",
+      "Inventory stays in sync between Zoho CRM and Google Sheets, so stock records always match.",
+      "Daily inventory checks find shortages, and low-stock alerts go out in time to restock before work stops.",
+      "Invoices are generated and sent to clients from the related inventory and transactions.",
+      "Daily and weekly reports cover inventory, operations and business performance.",
+      "Scheduled workflows watch the system and act on set business rules.",
+    ],
+    { h: "How the client benefits" },
+    [
+      "Fewer delays: shortages are caught before they stop a job.",
+      "No missed deadlines: every project’s closing date is checked daily.",
+      "Less data entry: tasks, stock and invoices update on their own.",
+      "Accurate numbers: the CRM and the inventory sheets always agree.",
+      "Clients billed on time: invoices go out without anyone preparing them.",
+      "A clear picture: daily and weekly reports arrive ready to read.",
+    ],
+    { h: "Tech stack" },
+    "Zoho CRM, Google Sheets and n8n, with scheduled workflows and email alerts running every day.",
   ],
 };
+const serviceExtraTree = () => ["div", "fcar", SERVICE_EXTRA.blocks.map(articleBlock)];
 const SERVICE_EXTRA_CSS =
   ".fcsv-x{margin:clamp(60px,7vw,110px) 0 0}.fcsv-x img{display:block;width:100%;height:auto;margin:0 0 28px;border-radius:24px;background:#0b0f0e}" +
   ".fcsv-x p{margin:0 0 18px;max-width:820px;font-size:18px;line-height:1.65;color:var(--fc-mut)}";
 const DISPLAY_STYLE = "font-family:var(--fc-font-d, 'Geist'), Inter, -apple-system, Arial, sans-serif;font-weight:var(--fc-font-dw, 500);font-style:normal";
 const serviceExtraHtml = () =>
   '<div class="fcsv-x"><h2 class="fcsv-h" style="' + DISPLAY_STYLE + '">' + SERVICE_EXTRA.title + '</h2><img src="' + SERVICE_EXTRA.img +
-  '" alt="' + SERVICE_EXTRA.alt + '" loading="lazy" decoding="async">' + SERVICE_EXTRA.ps.map((p) => "<p>" + p + "</p>").join("") + "</div>";
+  '" alt="' + SERVICE_EXTRA.alt + '" loading="lazy" decoding="async">' + flowHtml(serviceExtraTree()) + "</div>";
 
 // Tool logos (Simple Icons, brand colours) in assets/tools/<key>.svg. TOOL_KEYS maps a tool name as written on the site to its file
 const TOOL_KEYS = {
@@ -1220,7 +1422,7 @@ export const rules = [
   ["L.length>0&&u(`div`,{className:`fcsv-others`",
     "t===`" + SERVICE_EXTRA.slug + "`&&u(`div`,{className:`fcsv-x`,children:[d(`h2`,{className:`fcsv-h`,style:_,children:" + JSON.stringify(SERVICE_EXTRA.title) +
     "}),d(`img`,{src:`" + SERVICE_EXTRA.img + "`,alt:`" + SERVICE_EXTRA.alt + "`,loading:`lazy`,decoding:`async`})," +
-    SERVICE_EXTRA.ps.map((p) => "d(`p`,{children:" + JSON.stringify(p) + "})").join(",") + "]}),L.length>0&&u(`div`,{className:`fcsv-others`"],
+    flowJs("u", "d", serviceExtraTree()) + "]}),L.length>0&&u(`div`,{className:`fcsv-others`"],
   [".fcsv-det{margin:0 0 clamp(60px,7vw,110px);", SERVICE_EXTRA_CSS + ".fcsv-det{margin:0 0 clamp(60px,7vw,110px);"],
   // Case pages written as an article (CASE_ARTICLE): chapters 01 and 02 take its text in place of the large paragraph
   ["d(`p`,{className:`fccs-txt`,style:_,children:E.f8})", "(" + articleChapterJs(1, "d(`p`,{className:`fccs-txt`,style:_,children:E.f8})") + ")"],
@@ -1354,6 +1556,15 @@ export const rules = [
   [/<p class="fccs-txt"[^>]*>The team read long SEC proxy filings by hand[^<]*<\/p>/g, () => flowHtml(chapterTree("signal-law-group", 1)), "signal chapter 1"],
   [/<p class="fccs-txt"[^>]*>A React tool that reads Schedule 14A filings[^<]*<\/p>/g, () => flowHtml(chapterTree("signal-law-group", 2)), "signal chapter 2"],
   [/<p class="fccs-txt"[^>]*>We also automated the firm[^<]*<\/p>/g, () => flowHtml(chapterTree("signal-law-group", 3)), "signal chapter 3"],
+  [/<p class="fccs-txt"[^>]*>Reps worked leads in the order they arrived[^<]*<\/p>/g, () => flowHtml(chapterTree("rabbit-funding", 1)), "rabbit chapter 1"],
+  [/<p class="fccs-txt"[^>]*>An n8n system that enriches every new lead[^<]*<\/p>/g, () => flowHtml(chapterTree("rabbit-funding", 2)), "rabbit chapter 2"],
+  [/<p class="fccs-txt"[^>]*>We also automated the rest of Rabbit Funding[^<]*<\/p>/g, () => flowHtml(chapterTree("rabbit-funding", 3)), "rabbit chapter 3"],
+  [/<p class="fccs-txt"[^>]*>Analysts copied listing details[^<]*<\/p>/g, () => flowHtml(chapterTree("centris", 1)), "centris chapter 1"],
+  [/<p class="fccs-txt"[^>]*>A Python scraper and API pipeline[^<]*<\/p>/g, () => flowHtml(chapterTree("centris", 2)), "centris chapter 2"],
+  [/<p class="fccs-txt"[^>]*>We also built an AI document workflow[^<]*<\/p>/g, () => flowHtml(chapterTree("centris", 3)), "centris chapter 3"],
+  [/<p class="fccs-txt"[^>]*>Calls after hours and in busy periods[^<]*<\/p>/g, () => flowHtml(chapterTree("ai-voice-agent", 1)), "voice chapter 1"],
+  [/<p class="fccs-txt"[^>]*>A voice agent built on Vapi, Retell and Twilio with a natural[^<]*<\/p>/g, () => flowHtml(chapterTree("ai-voice-agent", 2)), "voice chapter 2"],
+  [/<p class="fccs-txt"[^>]*>We also built a lead generation and calling system[^<]*<\/p>/g, () => flowHtml(chapterTree("ai-voice-agent", 3)), "voice chapter 3"],
   ...(FEATURES.pills ? [
     [/(>Tools<\/dt><dd>)([\s\S]*?)(<\/dd>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "case tool pills html"],
     [/(<div class="fcsv-tools"[^>]*>)([\s\S]*?)(<\/div>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "service tool pills html"],
@@ -1448,9 +1659,9 @@ export const html = [
   // Case pages: the extra chapter in the server-rendered HTML too (matched by each case's original "What we built" text)
   [/(A support agent on chat and email that answers from Shopify[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("hostyo") + flowHtml(articleTree("hostyo")), "hostyo extra chapter"],
   [/(In production<!-- --> · <!-- -->Ledgerly<\/span>[\s\S]*?<\/a><\/div><\/div>)(?=<div class="fcsv-others">)/g, "$1" + serviceExtraHtml(), "workflow extra section"],
-  [/(A voice agent that answers in the clinic[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("ai-voice-agent"), "voice extra chapter"],
-  [/(A lead agent that replies within a minute, qualifies the buyer[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("centris"), "centris extra chapter"],
-  [/(An invoice agent that reads every document, matches it to purchase orders[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("rabbit-funding"), "rabbit extra chapter"],
+  [/(A voice agent that answers in the clinic[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("ai-voice-agent") + flowHtml(articleTree("ai-voice-agent")), "voice extra chapter"],
+  [/(A lead agent that replies within a minute, qualifies the buyer[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("centris") + flowHtml(articleTree("centris")), "centris extra chapter"],
+  [/(An invoice agent that reads every document, matches it to purchase orders[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("rabbit-funding") + flowHtml(articleTree("rabbit-funding")), "rabbit extra chapter"],
   [/(A private, permission-aware knowledge base that answers in plain words[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("signal-law-group") + flowHtml(articleTree("signal-law-group")), "signal extra chapter"],
   // Screenshots have one size: no srcset, or the server-rendered one sticks when the image changes (e.g. the Services menu)
   [new RegExp(` srcset="${IMG.replace(/[./]/g, "\\$&")}(?:${Object.keys(SHOTS).join("|")})\\.webp[^"]*"`, "g"), "", "screenshot srcset"],
