@@ -1353,8 +1353,26 @@ const THEME_CSS =
   ".am-theme{position:fixed;left:18px;bottom:18px;z-index:3000;display:grid;place-items:center;width:46px;height:46px;padding:0;border:1px solid rgba(255,255,255,.16);border-radius:50%;" +
   "background:rgba(10,16,20,.82);color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 10px 30px -10px rgba(0,0,0,.6);transition:transform .3s}" +
   ".am-theme:hover{transform:scale(1.08)}.am-theme svg{width:20px;height:20px}";
+// More questions for the "Ask the agent" chat: [question, answer]
+const FAQ_MORE = [
+  ["What kinds of tasks can you automate?", "Lead scoring and outreach, reading invoices and documents, syncing CRMs, AI phone calls and follow-ups, support replies, reports and reminders. If someone on your team does it the same way every week, it's usually a good fit."],
+  ["Do you build apps too, or only automations?", "Both. We build client portals, CRMs and dashboards, like Hostyo's owner portal, and connect them to the automations behind them."],
+  ["Which AI models and tools do you use?", "OpenAI and Claude models, n8n, Make and Zapier, Vapi, Retell and Twilio for voice, and Python where code fits better. We pick what suits the job and your budget."],
+  ["What happens after launch?", "We watch the first runs closely, fix what comes up and tune the system. Many clients keep us on hourly for changes and new automations."],
+  ["Who owns the workflows and code?", "You do. We build in your own accounts wherever possible and hand over the workflows, code and notes on how it all works."],
+  ["How do we get started?", "Book a free discovery call. We'll look at your process, tell you what's worth automating first and give you a quote."],
+];
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+const faqSpan = ([q, a], i) =>
+  '<div class="framer-1982i10" data-framer-name="faq-item"><div class="framer-1afeezq-container" data-code-component-plugin-id="api" data-framer-name="faq-row" name="faq-row"><!--$-->' +
+  `<span data-fc-row="faq" data-slug="q${9 + i}" data-f1="${esc(q)}" data-f2="${esc(a)}" data-f3="home" data-n1="${9 + i}" data-n2="0" aria-hidden="true" style="height:1px;width:1px;display:block;overflow:hidden;opacity:0;pointer-events:none"></span>` +
+  "<!--/$--></div></div>";
+// 14 questions: a taller chat on desktop, and the question list scrolls when space runs out
+const FAQ_CSS =
+  ".fcf .fcf-chat{height:min(860px,92vh)}.fcf .fcf-chips{max-height:46%;overflow-y:auto;flex-shrink:0}" +
+  "section.fcf.is-ph .fcf-chat{height:min(700px,88vh)}section.fcf.is-ph .fcf-chips{max-height:232px}";
 const EXTRA_HEAD =
-  "<style>" + ARTICLE_CSS + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
+  "<style>" + ARTICLE_CSS + FAQ_CSS + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
   (FEATURES.theme ? "<script>try{var t=localStorage.getItem('am-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script>" : "");
 const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M1.5 12H4M20 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>';
@@ -1410,6 +1428,10 @@ const headGradient = (p) => {
 };
 
 export const rules = [
+  // Chat: show all 14 questions (the original shows 8, or 5 on phones)
+  ["slice(0,M?5:8)", "slice(0,14)", "faq question count"],
+  ["P=T(`faq`,J.faq)", "P=[...T(`faq`,J.faq),..." + JSON.stringify(FAQ_MORE.map(([f1, f2], i) => ({ slug: "q" + (9 + i), f1, f2, f3: "home", n1: String(9 + i) }))) +
+    "].filter((e,i,a)=>a.findIndex(o=>o.f1===e.f1)===i)", "faq more questions js"],
   // Home: the workflow demo and the moving tool-logo strip at the end of the projects section (FcLogos names jsxs o and jsx s)
   ...(FEATURES.flow || FEATURES.strip ? [["children:[e.n,`: `,e.r]},t))})]", "children:[e.n,`: `,e.r]},t))})," +
     [FEATURES.flow && flowJs("o", "s"), FEATURES.strip && toolStripJs("o", "s")].filter(Boolean).join(",") + "]", "tool strip js"]] : []),
@@ -1656,6 +1678,10 @@ export const html = [
   // Styles for the extras on every page, and the theme button when that feature is on
   ["</head>", EXTRA_HEAD + "</head>", "extras head"],
   ...(FEATURES.theme ? [["</body>", THEME_BUTTON + "</body>", "theme button"]] : []),
+  // Chat questions: the extra rows in the CMS bridge, the buttons and the screen-reader list
+  [/(data-slug="q8"[\s\S]*?<\/span><!--\/\$--><\/div><\/div>)/g, "$1" + FAQ_MORE.map(faqSpan).join(""), "faq more rows"],
+  [/(start small\?<\/button>)/g, "$1" + FAQ_MORE.map(([q]) => `<button type="button" class>${esc(q)}</button>`).join(""), "faq more buttons"],
+  [/(<dt>Can we start small\?<\/dt><dd>[^<]*<\/dd><\/div>)/g, "$1" + FAQ_MORE.map(([q, a]) => `<div><dt>${esc(q)}</dt><dd>${esc(a)}</dd></div>`).join(""), "faq more list"],
   // Case pages: the extra chapter in the server-rendered HTML too (matched by each case's original "What we built" text)
   [/(A support agent on chat and email that answers from Shopify[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("hostyo") + flowHtml(articleTree("hostyo")), "hostyo extra chapter"],
   [/(In production<!-- --> · <!-- -->Ledgerly<\/span>[\s\S]*?<\/a><\/div><\/div>)(?=<div class="fcsv-others">)/g, "$1" + serviceExtraHtml(), "workflow extra section"],
