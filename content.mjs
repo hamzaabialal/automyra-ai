@@ -816,6 +816,64 @@ const CASE_ARTICLE = {
     quote: ["Perfect work, highly recommended for custom coding solutions!", "Andreas, Hostyo · Upwork review, 5.0★"],
     stack: "Owner portal: React, Vercel and Notion, with booking data from Airbnb and Booking.com. CRM: call recording, AI transcription and summaries in Greek and English, WhatsApp, Google Calendar and e-signature.",
   },
+  "signal-law-group": {
+    chapters: {
+      1: [
+        { title: "Signal Law Group" },
+        { lead: "Signal Law Group looks after shareholders. The firm studies the SEC filings of public companies, publishes how shareholders should vote on each proxy item, and investigates companies that put investors at risk." },
+        "Every company that holds a shareholder vote files a Schedule 14A proxy statement with the SEC. These run to dozens of pages, and the team read each one by hand before any analysis could start:",
+        [
+          "Long proxy filings read line by line, one company at a time.",
+          "Every ballot item copied out by hand before the real work began.",
+          "Research, articles, press releases and videos for each investigation made from scratch.",
+          "New filings found only when someone went looking on EDGAR.",
+        ],
+        "The work was careful but slow, and how many companies the firm could cover depended on how fast people could read.",
+      ],
+      2: [
+        { h: "AI tools that read proxy filings" },
+        "A React tool reads each Schedule 14A filing with OpenAI and drafts every ballot item. Next to it, a dashboard drafts investigation material and HeyGen videos through Make.com.",
+        [
+          "Filing reader: every ballot item comes out drafted in about 10 minutes per filing.",
+          "Linked to the source: each item points back to the part of the filing it came from, so an analyst can check it quickly.",
+          "Investigation dashboard: drafts the written material and an AI video for each investigation.",
+          "The Signal Ledger (in the screenshot above): every recommendation is published within 48 hours of the EDGAR filing, timestamped and given a SHA fingerprint so it cannot be quietly changed, then checked against the vote result the company reports in its 8-K.",
+        ],
+      ],
+      3: [
+        { h: "From a company name to a published investigation" },
+        "We also automated the firm's research and publishing on Make.com, so one input becomes a complete, reviewed investigation.",
+        [
+          "A company name goes in. GPT with live web search researches it and scores the risk.",
+          "The system produces the full package: article, press release, cover image, PDF and a 60-second AI news-anchor video.",
+          "Once a person approves it, it is published on WordPress and sent to 226 publisher outlets.",
+          "Every 12 hours it checks SEC EDGAR for new proxy statements and drafts a voting recommendation for an analyst to review within 48 hours.",
+        ],
+      ],
+    },
+    label: "The result",
+    title: "What changed for Signal Law Group",
+    lead: "Reading a proxy filing went from hours of manual work to about 10 minutes, with every ballot item linked to its source. Investigations go from a company name to a published, reviewed package, and no new filing is missed.",
+    facts: [["10 min", "per proxy filing"], ["6 h", "saved per filing"], ["226", "publisher outlets"], ["48 h", "filing to recommendation"]],
+    sections: [
+      ["How Signal Law Group benefits", [
+        "The tools changed how much the firm can cover and how much people can trust what it publishes.",
+        [
+          "More companies covered: the team now follows far more companies than reading by hand ever allowed.",
+          "No missed filings: EDGAR is checked every 12 hours, so a new proxy statement is picked up the same day.",
+          "Hours back on every filing: about 6 hours saved per filing now go to analysis instead of copying.",
+          "A record people can trust: timestamps and SHA fingerprints prove a recommendation was never changed, and the 8-K vote results show how each call held up.",
+          "Wider reach: each approved investigation goes to 226 publisher outlets with the article, press release and video ready.",
+          "People stay in charge: nothing goes public without a person signing off.",
+        ],
+      ]],
+      ["How we worked", [
+        "We started with how the analysts already worked: which parts of a filing they read, what they pulled out and how they checked it. We built the filing reader first, so ballot items come out in the same shape analysts write them, each linked to its source. Then we automated the research and publishing around it on Make.com, with an approval step before anything goes out.",
+      ]],
+    ],
+    quote: ["He quickly understood the requirements, communicated clearly throughout the project, and delivered a solution that was both reliable and well designed.", "Upwork client · 5.0★ review"],
+    stack: "Filing tools: React and OpenAI, reading SEC Schedule 14A filings from EDGAR. Research and publishing: Make.com, GPT with live web search, HeyGen for AI video, WordPress and 226 publisher outlets. Signal Ledger: timestamps and SHA fingerprints, checked against 8-K vote results.",
+  },
 };
 // Element trees (rendered by flowHtml and flowJs)
 const articleBlock = (b) =>
@@ -1262,6 +1320,9 @@ export const rules = [
   [/<p class="fccs-txt"[^>]*>Owner updates lived in spreadsheets[^<]*<\/p>/g, () => flowHtml(chapterTree("hostyo", 1)), "hostyo chapter 1"],
   [/<p class="fccs-txt"[^>]*>A React owner portal on Vercel[^<]*<\/p>/g, () => flowHtml(chapterTree("hostyo", 2)), "hostyo chapter 2"],
   [/<p class="fccs-txt"[^>]*>We also built and maintain a custom CRM for Hostyo[^<]*<\/p>/g, () => flowHtml(chapterTree("hostyo", 3)), "hostyo chapter 3"],
+  [/<p class="fccs-txt"[^>]*>The team read long SEC proxy filings by hand[^<]*<\/p>/g, () => flowHtml(chapterTree("signal-law-group", 1)), "signal chapter 1"],
+  [/<p class="fccs-txt"[^>]*>A React tool that reads Schedule 14A filings[^<]*<\/p>/g, () => flowHtml(chapterTree("signal-law-group", 2)), "signal chapter 2"],
+  [/<p class="fccs-txt"[^>]*>We also automated the firm[^<]*<\/p>/g, () => flowHtml(chapterTree("signal-law-group", 3)), "signal chapter 3"],
   ...(FEATURES.pills ? [
     [/(>Tools<\/dt><dd>)([\s\S]*?)(<\/dd>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "case tool pills html"],
     [/(<div class="fcsv-tools"[^>]*>)([\s\S]*?)(<\/div>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "service tool pills html"],
@@ -1359,7 +1420,7 @@ export const html = [
   [/(A voice agent that answers in the clinic[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("ai-voice-agent"), "voice extra chapter"],
   [/(A lead agent that replies within a minute, qualifies the buyer[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("centris"), "centris extra chapter"],
   [/(An invoice agent that reads every document, matches it to purchase orders[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("rabbit-funding"), "rabbit extra chapter"],
-  [/(A private, permission-aware knowledge base that answers in plain words[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("signal-law-group"), "signal extra chapter"],
+  [/(A private, permission-aware knowledge base that answers in plain words[^<]*<\/p>[\s\S]*?<\/dl><\/div><\/div>)/g, caseExtraHtml("signal-law-group") + flowHtml(articleTree("signal-law-group")), "signal extra chapter"],
   // Screenshots have one size: no srcset, or the server-rendered one sticks when the image changes (e.g. the Services menu)
   [new RegExp(` srcset="${IMG.replace(/[./]/g, "\\$&")}(?:${Object.keys(SHOTS).join("|")})\\.webp[^"]*"`, "g"), "", "screenshot srcset"],
   // No Framer branding: badge, page comments, generator tag, editor loader, analytics and the template's demo bar
