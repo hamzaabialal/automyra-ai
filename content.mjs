@@ -1253,6 +1253,9 @@ const flowTree = () => {
       if (i) kids.push(["span", "amw-c amw-c" + (i - 1), [["i", "", []], ...(FEATURES.burst ? Array.from({ length: TRAIL }, () => ["u", "", []]) : [])], { "aria-hidden": true }]);
       kids.push(step(s, i));
     });
+    if (FEATURES.ring) kids.push(
+      ["span", "amw-rp", steps.map(() => ["i", "", []]), { "aria-hidden": true }],
+      ...steps.slice(1).map((_, k) => ["span", "amw-pk amw-pk" + k, Array.from({ length: PACKET }, () => ["i", "", []]), { "aria-hidden": true }]));
     return ["div", "amw-flow amw-f" + f, kids, { role: "img", "aria-label": name + " workflow: " + steps.map((s) => s[1]).join(", then ") }];
   };
   return ["div", "amw", [
@@ -1341,8 +1344,52 @@ const sparkCss = () => {
   }
   return "@supports (offset-path:inset(0 round 1px)){" + css + "}@media (prefers-reduced-motion:reduce){.amw-sp{display:none}}";
 };
+// Ring: on desktop the steps sit on an oval track around a hub with the workflow's name and slowly revolve (--rv turns
+// the whole ring, each card keeps upright); the lines between cards give way to the track. Phones keep the column
+const RING_TURN = 36, PACKET = 5; // seconds per turn; dots in each packet (the first is the head, the rest its tail)
+const ringCss = () => {
+  const n = FLOWS[0][1].length;
+  let css = ".amw-stack{animation:amw-rv " + RING_TURN + "s linear infinite}.amw-stack:hover{animation-play-state:paused}" +
+    ".amw-flow{--rx:min(30vw,470px);--ry:200px;display:block;height:620px}" +
+    ".amw-flow::before{content:\"\";position:absolute;left:50%;top:50%;width:calc(var(--rx)*2);height:calc(var(--ry)*2);translate:-50% -50%;border:1px dashed color-mix(in srgb,var(--fc-brass) 35%,transparent);border-radius:50%;pointer-events:none}" +
+    ".amw-flow::after{position:absolute;left:50%;top:50%;translate:-50% -50%;display:grid;place-items:center;width:170px;height:170px;border:1px solid color-mix(in srgb,var(--fc-brass) 45%,transparent);border-radius:50%;" +
+    "background:radial-gradient(circle,color-mix(in srgb,var(--fc-brass) 22%,transparent),transparent 70%);box-shadow:0 0 60px -10px color-mix(in srgb,var(--fc-brass) 50%,transparent);" +
+    "font:500 13px/1.5 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;text-align:center;white-space:pre;color:var(--fc-cloud,#fff)}" +
+    ".amw-flow .amw-n{position:absolute;left:50%;top:50%;width:210px}.amw-flow .amw-c{display:none}";
+  FLOWS.forEach(([name], f) => { css += ".amw-f" + f + "::after{content:\"" + name.replace(" & ", " &\\A ") + "\"}"; });
+  const deg = (i) => i * (360 / n) - 90, at = (i) => 6 + i * 16;
+  for (let i = 0; i < n; i++) {
+    const a = "(var(--rv) + " + deg(i) + "deg)";
+    css += ".amw-flow .amw-n" + i + "{translate:calc(-50% + cos" + a + " * var(--rx)) calc(-50% + sin" + a + " * var(--ry))}";
+  }
+  // Ripples: as each step's check mark lands, a ring of light leaves the hub and spreads out to the track
+  css += ".amw-rp,.amw-pk{display:block;position:absolute;inset:0;pointer-events:none;z-index:0}" +
+    ".amw-rp i{position:absolute;left:50%;top:50%;width:170px;height:170px;translate:-50% -50%;border:2px solid var(--fc-brass);border-radius:50%;opacity:0;" +
+    "box-shadow:0 0 24px color-mix(in srgb,var(--fc-brass) 55%,transparent),inset 0 0 24px color-mix(in srgb,var(--fc-brass) 35%,transparent)}";
+  for (let i = 0; i < n; i++) {
+    const c = at(i) + 12;
+    css += "@keyframes amw-rp" + i + "{0%," + c + "%{width:170px;height:170px;opacity:0}" + (c + 0.5) + "%{width:170px;height:170px;opacity:.9}" + (c + 13) + "%{opacity:.55}" +
+      (c + 22) + "%,100%{width:calc(var(--rx)*2);height:calc(var(--ry)*2);opacity:0}}" +
+      ".amw-rp i:nth-child(" + (i + 1) + "){animation:amw-rp" + i + " " + FLOW_CYCLE + "s cubic-bezier(.2,.6,.3,1) infinite}";
+  }
+  // Packets: a glowing dot with a short tail rides the track from each finished step to the next one
+  css += ".amw-pk i{position:absolute;left:50%;top:50%;border-radius:50%;opacity:0;" +
+    "translate:calc(-50% + cos(var(--rv) + var(--pa)) * var(--rx)) calc(-50% + sin(var(--rv) + var(--pa)) * var(--ry))}";
+  for (let j = 0; j < PACKET; j++) {
+    const size = 12 - j * 2, c = j % 2 ? "#7ff5d0" : "var(--fc-brass)";
+    css += ".amw-pk i:nth-child(" + (j + 1) + "){width:" + size + "px;height:" + size + "px;background:" + c + ";box-shadow:0 0 " + (16 - j * 2) + "px " + c + ";animation-delay:" + (j * 0.025).toFixed(3) + "s}";
+  }
+  for (let k = 0; k < n - 1; k++) {
+    const s = at(k) + 10, e = at(k + 1);
+    css += "@keyframes amw-pk" + k + "{0%," + s + "%{--pa:" + deg(k) + "deg;opacity:0}" + (s + 0.5) + "%{opacity:1}" + (e - 0.3) + "%{--pa:" + deg(k + 1) + "deg;opacity:1}" +
+      e + "%,100%{--pa:" + deg(k + 1) + "deg;opacity:0}}.amw-pk" + k + " i{animation-name:amw-pk" + k + ";animation-duration:" + FLOW_CYCLE + "s;animation-timing-function:ease-in-out;animation-iteration-count:infinite}";
+  }
+  return "@property --rv{syntax:'<angle>';inherits:true;initial-value:0deg}@property --pa{syntax:'<angle>';inherits:false;initial-value:0deg}@keyframes amw-rv{to{--rv:360deg}}" +
+    ".amw-rp,.amw-pk{display:none}@media (min-width:810px){" + css + "}@media (prefers-reduced-motion:reduce){.amw-rp,.amw-pk{display:none!important}}";
+};
 const flowHtml = ([tag, cls, kids, attrs = {}] = flowTree()) => {
-  const a = (cls ? ' class="' + cls + '"' : "") + Object.entries(attrs).map(([k, v]) => " " + k + '="' + v + '"').join("");
+  const a = (cls ? ' class="' + cls + '"' : "") + Object.entries(attrs).map(([k, v]) =>
+    " " + k + '="' + (typeof v === "object" ? Object.entries(v).map(([p, x]) => p + ":" + x).join(";") : v) + '"').join("");
   if (tag === "img") return "<img" + a + ">";
   return "<" + tag + a + ">" + kids.map((c) => (typeof c === "string" ? c : flowHtml(c))).join("") + "</" + tag + ">";
 };
@@ -1353,6 +1400,80 @@ const flowJs = (u, d, [tag, cls, kids, attrs = {}] = flowTree()) => {
   if (ch.length) props.push("children:" + (ch.length > 1 ? "[" + ch.join(",") + "]" : ch[0]));
   return (ch.length > 1 ? u : d) + "(`" + tag + "`,{" + props.join(",") + "})";
 };
+// "Same week. Different job." as a week clock: Mon 9:00 to Fri 17:00 is one turn of the dial, each task a slice at its
+// own time. Scrolling turns a clock hand that sweeps the "after" dial over the "before" one. [day, hour, hours, task]
+const WEEK_BEFORE = [[0, 9, 2, "Copy leads into the CRM"], [0, 12, 3, "Answer the same 40 emails"], [1, 9, 3, "Chase unpaid invoices"],
+  [1, 14, 2, "Book and move appointments"], [2, 10, 2, "Update the sales sheet"], [2, 13, 3, "Reply to support tickets"],
+  [3, 9, 2, "Match receipts to invoices"], [3, 12, 2, "Weekly report by hand"], [4, 10, 3, "Answer the same 40 emails"], [4, 14, 2, "Onboard new clients by email"]];
+const WEEK_AFTER = [[0, 10, 2, "Client strategy"], [2, 13, 2, "Team workshop"], [4, 11, 2, "Close two deals"]];
+const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const dialTree = (kind) => {
+  const items = kind === "b" ? WEEK_BEFORE : WEEK_AFTER;
+  const ang = (d, h) => ((d * 8 + h - 9) / 40) * 360;
+  const pt = (a, r) => { const t = (a * Math.PI) / 180; return [+(100 + r * Math.sin(t)).toFixed(2), +(100 - r * Math.cos(t)).toFixed(2)]; };
+  const arc = (a0, a1, r) => { const [x0, y0] = pt(a0, r), [x1, y1] = pt(a1, r); return "M" + x0 + " " + y0 + " A" + r + " " + r + " 0 " + (a1 - a0 > 180 ? 1 : 0) + " 1 " + x1 + " " + y1; };
+  const line = (a, r0, r1, cls) => { const [x0, y0] = pt(a, r0), [x1, y1] = pt(a, r1); return ["path", cls, [], { d: "M" + x0 + " " + y0 + " L" + x1 + " " + y1 }]; };
+  const svg = ["svg", "", [
+    ["circle", "fcd-face", [], { cx: 100, cy: 100, r: 99 }],
+    // A watch face: a tick for every working hour, longer ones where a day starts
+    ...Array.from({ length: 40 }, (_, k) => (k % 8 ? line(k * 9, 94, 97, "fcd-hr") : null)).filter(Boolean),
+    ["circle", "fcd-track", [], { cx: 100, cy: 100, r: 82 }],
+    ...WEEK_DAYS.map((_, k) => line(k * 72, 70, 98, "fcd-tick")),
+    ...items.map(([d, h, n]) => ["path", "fcd-seg", [], { d: arc(ang(d, h) + 1.2, ang(d, h + n) - 1.2, 82) }]),
+    ...WEEK_DAYS.map((day, k) => { const [x, y] = pt(k * 72 + 36, 62); return ["text", "fcd-day", [day.toUpperCase()], { x, y }]; }),
+  ], { viewBox: "0 0 200 200", "aria-hidden": true }];
+  const label = ([d, h, n, t]) => {
+    const m = ang(d, h + n / 2), s = Math.sin((m * Math.PI) / 180), c = Math.cos((m * Math.PI) / 180);
+    const side = Math.abs(s) < 0.1 ? (c > 0 ? "t" : "u") : s > 0 ? "r" : "l";
+    return ["span", "fcd-lb fcd-" + side, [["b", "", [t]], ["em", "", [WEEK_DAYS[d] + " " + h + ":00 · " + n + " h"]]],
+      { style: { left: (50 + 50 * s).toFixed(2) + "%", top: (50 - 50 * c).toFixed(2) + "%" } }];
+  };
+  const mid = kind === "b" ? [["p", "fcd-mid", [["b", "", [String(items.length)]], "tasks done by hand"]]] : [];
+  return ["div", "fcd fcd-" + kind, [
+    ["div", "fcd-dial", [svg, ...items.map(label), ...mid]],
+    ["ol", "fcd-list", items.map(([d, h, n, t]) => ["li", "", [["b", "", [t]], ["em", "", [WEEK_DAYS[d] + " " + h + ":00"]]]])],
+  ]];
+};
+const DIAL_CSS =
+  ".fcc{--bh:clamp(400px,calc(100svh - 270px),720px);--ds:min(calc(var(--bh) - 64px),44vw)}" +
+  // Desktop: the clock sits in a dark box; its labels are light
+  ".fcc:not(.is-ph) .fcc-board{background:var(--fc-night);border-radius:28px;overflow:hidden;box-shadow:0 40px 80px -50px color-mix(in srgb,var(--fc-ink) 60%,transparent)}" +
+  ".fcc:not(.is-ph) .fcc-tag,.fcc:not(.is-ph) .fcd-lb b{color:var(--fc-cloud)}.fcc:not(.is-ph) .fcd-lb em,.fcc:not(.is-ph) .fcd-a .fcd-lb em{color:color-mix(in srgb,var(--fc-cloud) 62%,transparent)}" +
+  ".fcc .fcc-board{height:var(--bh)}" +
+  // Desktop: no card around it, just one big clock (the face carries the colour; the "before" side clears as the hand passes)
+  ".fcc:not(.is-ph) .fcc-layer{background:none;box-shadow:none}" +
+  ".fcc:not(.is-ph) .l-before{-webkit-mask:conic-gradient(transparent calc(var(--wipe)*361deg),#000 0);mask:conic-gradient(transparent calc(var(--wipe)*361deg),#000 0)}" +
+  ".fcd-face{fill:var(--fc-cloud)}.fcd-a .fcd-face{fill:var(--fc-brass)}" +
+  ".fcd-hr{stroke:color-mix(in srgb,var(--fc-ink) 28%,transparent);stroke-width:.6}" +
+  ".fcc .fcc-tag{position:absolute;top:clamp(18px,2vw,28px);left:clamp(18px,2vw,28px);z-index:2}.fcc .l-before{z-index:0}.fcc .l-after{z-index:1}" +
+  ".fcc .l-after{clip-path:none;-webkit-mask:conic-gradient(#000 calc(var(--wipe)*360deg),transparent 0);mask:conic-gradient(#000 calc(var(--wipe)*360deg),transparent 0)}" +
+  ".fcd{position:absolute;inset:0;display:grid;place-items:center}.fcd-dial{position:relative;width:var(--ds);height:var(--ds)}" +
+  ".fcd-dial svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}" +
+  ".fcd-track{fill:none;stroke:color-mix(in srgb,var(--fc-ink) 7%,transparent);stroke-width:16}.fcd-seg{fill:none;stroke-width:16}" +
+  ".fcd-b .fcd-seg{stroke:color-mix(in srgb,#FF5A4E 72%,var(--fc-ink))}.fcd-a .fcd-track{stroke:color-mix(in srgb,var(--fc-ink) 16%,transparent)}.fcd-a .fcd-seg{stroke:var(--fc-ink)}" +
+  ".fcd-tick{stroke:color-mix(in srgb,var(--fc-ink) 40%,transparent);stroke-width:1}" +
+  ".fcd-day{font:500 6px 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.14em;fill:color-mix(in srgb,var(--fc-ink) 62%,transparent);text-anchor:middle;dominant-baseline:middle}" +
+  ".fcd-lb{position:absolute;display:flex;flex-direction:column;gap:3px;width:max-content;max-width:200px;font-size:13.5px;line-height:1.25}" +
+  ".fcd-lb b{font-weight:600}.fcd-lb em,.fcd-list em{font:400 12px 'IBM Plex Mono',ui-monospace,monospace;font-style:normal;color:var(--fc-mut)}.fcd-a .fcd-lb em{color:color-mix(in srgb,var(--fc-ink) 72%,var(--fc-brass))}" +
+  ".fcd-r{translate:14px -50%}.fcd-l{translate:calc(-100% - 14px) -50%;text-align:right;align-items:flex-end}" +
+  ".fcd-t{translate:-50% calc(-100% - 10px);text-align:center;align-items:center}.fcd-u{translate:-50% 10px;text-align:center;align-items:center}" +
+  ".fcd-mid{position:absolute;inset:0;display:grid;place-content:center;margin:0;text-align:center;font-size:13px;color:var(--fc-mut)}" +
+  ".fcd-mid b{font-size:calc(var(--ds)*.17);font-weight:500;letter-spacing:-.05em;line-height:1;color:var(--fc-ink)}.fcd-list{display:none}" +
+  ".fcc .l-after .fcc-log{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:1;width:max-content;flex-direction:column;align-items:center;gap:5px}" +
+  ".fcc .l-after .fcc-log span{padding:4px 10px;font-size:11px;white-space:nowrap}" +
+  // The scroll handle becomes a clock hand: it turns with the sweep, its label stays upright
+  ".fcc .fcc-edge{left:50%;top:50%;bottom:auto;width:0;height:0;z-index:3;rotate:calc(var(--wipe)*360deg)}" +
+  ".fcc .fcc-edge::before{top:calc(var(--ds)*-.5 - 4px);bottom:auto;height:calc(var(--ds)*.2 + 4px)}" +
+  ".fcc .fcc-edge span{top:calc(var(--ds)*-.41);left:0;translate:-50% -50%;rotate:calc(var(--wipe)*-360deg);width:62px;height:62px;font-size:11px}" +
+  // Phones: a smaller dial with the tasks listed under it
+  ".fcc.is-ph{--ds:min(64vw,280px)}.fcc.is-ph .fcd{position:relative;inset:auto;gap:14px;padding:44px 0 6px}.fcc.is-ph .l-after .fcd{padding-top:44px}" +
+  ".fcc.is-ph .fcd-lb{display:none}.fcc.is-ph .fcd-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;width:100%;margin:0;padding:0;list-style:none}" +
+  ".fcc.is-ph .fcd-list li{display:flex;flex-direction:column;gap:1px;font-size:12px;line-height:1.25}.fcc.is-ph .fcd-list em{font-size:10.5px}" +
+  ".fcc.is-ph .l-after .fcc-log{position:static;translate:none;width:auto;flex-direction:row;flex-wrap:wrap;justify-content:center;margin-top:10px}" +
+  ".fcc.is-ph .fcc-edge span{width:46px;height:46px;font-size:9px}" +
+  // On phones the dial sits at the top of the board, so the sweep and the hand turn around that point
+  ".fcc.is-ph{--dc:calc(clamp(18px,2vw,28px) + 44px + var(--ds)/2)}.fcc.is-ph .fcc-edge{top:var(--dc)}" +
+  ".fcc.is-ph .l-after{-webkit-mask:conic-gradient(at 50% var(--dc),#000 calc(var(--wipe)*360deg),transparent 0);mask:conic-gradient(at 50% var(--dc),#000 calc(var(--wipe)*360deg),transparent 0)}";
 // Keyframes per step: each one waits, lights up, stays done, and all reset just before the next run
 const flowCss = () => {
   const n = FLOWS[0][1].length, at = (i) => 6 + i * 16;
@@ -1407,10 +1528,12 @@ const flowCss = () => {
 // (to preview). strip: moving tool-logo strip on the home page; pills: tool logos in case and service pills;
 // flow: live workflow demo on the home page; theme: dark/light button (dark by default when on);
 // sparkle: sparkles circling the workflow demo; burst: sparkle bursts and data trails in the demo;
-// ember: specks rising from under the demo; spot: a light following the mouse on the demo.
-const FEATURES = process.env.ALL_FEATURES ? { strip: true, pills: true, flow: true, theme: true, sparkle: true, burst: true, ember: true, spot: true }
-  : { strip: false, pills: false, flow: true, theme: false, sparkle: true, burst: true,
-    ember: true, spot: true };
+// ember: specks rising from under the demo; spot: a light following the mouse on the demo;
+// dial: the before/after week as a clock (DIAL=1 node apply.mjs to preview);
+// ring: the demo's steps revolving on an oval track, with ripples from the hub and packets along the track.
+const FEATURES = process.env.ALL_FEATURES ? { strip: true, pills: true, flow: true, theme: true, sparkle: true, burst: true, ember: true, spot: true, dial: true, ring: true }
+  : { strip: false, pills: false, flow: true, theme: false, sparkle: false, burst: true,
+    ember: false, spot: true, dial: !!process.env.DIAL, ring: true };
 
 // Styles for the extras, added to every page's <head>
 const STRIP_CSS =
@@ -1453,7 +1576,7 @@ const FAQ_CSS =
   ".fcf .fcf-chat{height:min(860px,92vh)}.fcf .fcf-chips{max-height:46%;overflow-y:auto;flex-shrink:0}" +
   "section.fcf.is-ph .fcf-chat{height:min(700px,88vh)}section.fcf.is-ph .fcf-chips{max-height:232px}";
 const EXTRA_HEAD =
-  "<style>" + ARTICLE_CSS + FAQ_CSS + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() + (FEATURES.sparkle ? sparkCss() : "") + (FEATURES.burst ? burstCss() : "") + (FEATURES.ember ? emberCss() : "") + (FEATURES.spot ? SPOT_CSS : "") : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
+  "<style>" + ARTICLE_CSS + FAQ_CSS + (FEATURES.dial ? DIAL_CSS : "") + (FEATURES.strip ? STRIP_CSS : "") + (FEATURES.pills ? PILL_CSS : "") + (FEATURES.flow ? flowCss() + (FEATURES.sparkle ? sparkCss() : "") + (FEATURES.burst ? burstCss() : "") + (FEATURES.ember ? emberCss() : "") + (FEATURES.spot ? SPOT_CSS : "") + (FEATURES.ring ? ringCss() : "") : "") + (FEATURES.theme ? THEME_CSS : "") + "</style>" +
   (FEATURES.theme ? "<script>try{var t=localStorage.getItem('am-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script>" : "");
 const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2.5M12 20v2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M1.5 12H4M20 12h2.5M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"/></svg>';
@@ -1511,6 +1634,8 @@ const headGradient = (p) => {
 export const rules = [
   // Chat: show all 14 questions (the original shows 8, or 5 on phones)
   ["slice(0,M?5:8)", "slice(0,14)", "faq question count"],
+  ...(FEATURES.dial ? [[/K=\(\{items:e,kind:t\}\)=>[\s\S]*?(?=;return s\(`div`,\{ref:O,className:`fc fcc)/,
+    () => "K=({kind:t})=>t===`b`?" + flowJs("s", "c", dialTree("b")) + ":" + flowJs("s", "c", dialTree("a")), "week dial js"]] : []),
   ["P=T(`faq`,J.faq)", "P=[...T(`faq`,J.faq),..." + JSON.stringify(FAQ_MORE.map(([f1, f2], i) => ({ slug: "q" + (9 + i), f1, f2, f3: "home", n1: String(9 + i) }))) +
     "].filter((e,i,a)=>a.findIndex(o=>o.f1===e.f1)===i)", "faq more questions js"],
   // Home: the workflow demo and the moving tool-logo strip at the end of the projects section (FcLogos names jsxs o and jsx s)
@@ -1760,6 +1885,9 @@ export const html = [
   ["</head>", EXTRA_HEAD + "</head>", "extras head"],
   ...(FEATURES.theme ? [["</body>", THEME_BUTTON + "</body>", "theme button"]] : []),
   ...(FEATURES.flow && FEATURES.spot ? [["</body>", SPOT_JS + "</body>", "workflow spotlight"]] : []),
+  // Week clock: the before and after dials in place of the two calendar grids
+  ...(FEATURES.dial ? [[/<div class="fcc-grid g-b">[\s\S]*?(?=<\/div><div class="fcc-layer l-after">)/g, () => flowHtml(dialTree("b")), "week dial before"],
+    [/<div class="fcc-grid g-a">[\s\S]*?(?=<div class="fcc-log")/g, () => flowHtml(dialTree("a")), "week dial after"]] : []),
   // Chat questions: the extra rows in the CMS bridge, the buttons and the screen-reader list
   [/(data-slug="q8"[\s\S]*?<\/span><!--\/\$--><\/div><\/div>)/g, "$1" + FAQ_MORE.map(faqSpan).join(""), "faq more rows"],
   [/(start small\?<\/button>)/g, "$1" + FAQ_MORE.map(([q]) => `<button type="button" class>${esc(q)}</button>`).join(""), "faq more buttons"],
