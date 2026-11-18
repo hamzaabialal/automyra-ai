@@ -9,7 +9,7 @@ In your own accounts wherever possible. Anything we hold is encrypted in transit
 - Have it corrected or deleted
 - Revoke our access to your tools at any time
 ## Contact
-Write to hamzaabialal@gmail.com.`,terms:i=`## Working with us
+Write to team@automyrasi.com.`,terms:i=`## Working with us
 Each project runs on a written scope with an hourly rate or a fixed price, agreed before we start.
 ## Payment
 Hourly work is billed weekly. Fixed-price builds are billed 50% at kick-off and 50% at launch. Projects hired through Upwork follow Upwork's payment terms.
@@ -116,7 +116,7 @@ In your own accounts wherever possible. Anything we hold is encrypted in transit
 - Have it corrected or deleted
 - Revoke our access to your tools at any time
 ## Contact
-Write to hamzaabialal@gmail.com.`},terms:{type:O.String,title:`Terms`,displayTextArea:!0,defaultValue:`## Working with us
+Write to team@automyrasi.com.`},terms:{type:O.String,title:`Terms`,displayTextArea:!0,defaultValue:`## Working with us
 Each project runs on a written scope with an hourly rate or a fixed price, agreed before we start.
 ## Payment
 Hourly work is billed weekly. Fixed-price builds are billed 50% at kick-off and 50% at launch. Projects hired through Upwork follow Upwork's payment terms.
@@ -136,7 +136,7 @@ In your own accounts wherever possible. Anything we hold is encrypted in transit
 - Have it corrected or deleted
 - Revoke our access to your tools at any time
 ## Contact
-Write to hamzaabialal@gmail.com.`,stone:`var(--token-f2d690a8-f54f-4bde-87fd-b6557d995849)`,style:{width:`100%`},terms:`## Working with us
+Write to team@automyrasi.com.`,stone:`var(--token-f2d690a8-f54f-4bde-87fd-b6557d995849)`,style:{width:`100%`},terms:`## Working with us
 Each project runs on a written scope with an hourly rate or a fixed price, agreed before we start.
 ## Payment
 Hourly work is billed weekly. Fixed-price builds are billed 50% at kick-off and 50% at launch. Projects hired through Upwork follow Upwork's payment terms.

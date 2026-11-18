@@ -191,7 +191,6 @@ export const slugs = {
 const IMG = "https://framerusercontent.com/images/";
 const WHATSAPP = "https://wa.me/923047670164";
 const UPWORK = "https://www.upwork.com/agencies/2001333416097289203/";
-const EMAIL2 = "sirajsoban1@gmail.com";
 // Contact form messages go to this inbox via FormSubmit (the first message sends an activation email there)
 const CONTACT_INBOX = "hamzaabialal@gmail.com";
 const CONTACT_ENDPOINT = "https://formsubmit.co/ajax/" + CONTACT_INBOX;
@@ -380,15 +379,6 @@ const sitewide = [
   // FAQ: more room below the chat panel so the curved CTA never covers it
   [".fcf{position:relative;background:var(--fc-bone);color:var(--fc-ink);padding:clamp(60px,6vw,100px) 0 clamp(100px,11vw,170px)}",
     ".fcf{position:relative;background:var(--fc-bone);color:var(--fc-ink);padding:clamp(60px,6vw,100px) 0 calc(8vw + clamp(60px,6vw,110px))}"],
-  // Second contact email (footer + contact page)
-  [
-    "x(`a`,{className:`fco-mail`,href:`mailto:${g.email}`,style:u,children:g.email}),",
-    "x(`a`,{className:`fco-mail`,href:`mailto:${g.email}`,style:u,children:g.email}),x(`a`,{className:`fco-mail`,href:`mailto:" + EMAIL2 + "`,style:{...u,display:`table`,marginTop:8},children:`" + EMAIL2 + "`}),",
-  ],
-  [
-    "d(`a`,{href:`mailto:${C.email}`,style:b,children:C.email})",
-    "d(`a`,{href:`mailto:${C.email}`,style:b,children:C.email}),d(`a`,{href:`mailto:" + EMAIL2 + "`,style:{...b,fontSize:`clamp(26px,2.4vw,40px)`,fontWeight:500,letterSpacing:`-.04em`,width:`max-content`},children:`" + EMAIL2 + "`})",
-  ],
   // Hostyo video testimonial, added at the end of the "What clients say" section
   [
     "String(w).padStart(2,`0`)]})]})]})]})]});return n?d(Tr,{on:!0,layer:r,children:P}):P}",
@@ -636,7 +626,7 @@ const sitewide = [
   // Legal
   ["Last updated 1 September 2026", "Last updated 27 October 2026"],
   ["To run your audit, build and operate your agents, and support your team.", "To scope, build and support your automations, and to reply to you."],
-  ["privacy@flowcraftagents.ai", "hamzaabialal@gmail.com"],
+  ["privacy@flowcraftagents.ai", "team@automyrasi.com"],
   ["Each project runs on a written scope with a fixed price, agreed before we start.", "Each project runs on a written scope with an hourly rate or a fixed price, agreed before we start."],
   [
     "The audit is paid up front. Builds are billed 50% at kick-off and 50% at launch. Monthly plans bill in advance and can be cancelled with 30 days' notice.",
@@ -1751,7 +1741,7 @@ export const rules = [
   ["Flowcraft AI Automation Agency", "Automyra AI Automation Agency"],
   ["Flowcraft", "Automyra AI"],
   ["console.flowcraftagents.ai", "console · automyra ai"],
-  ["hello@flowcraftagents.ai", "hamzaabialal@gmail.com"],
+  ["hello@flowcraftagents.ai", "team@automyrasi.com"],
   ["tel:+16465550187", "tel:+923047670164"],
   ["+1 646 555 0187", "+92 304 7670164"],
   ["54 W 21st St, New York, NY 10010", "Karachi, Pakistan"],
