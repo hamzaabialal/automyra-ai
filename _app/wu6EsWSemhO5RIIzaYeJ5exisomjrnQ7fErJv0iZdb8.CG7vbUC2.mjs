@@ -59,31 +59,98 @@ import{t as e}from"./rolldown-runtime.Bi-D_2cA.mjs";import{A as t,C as n,E as r,
 @media (max-width:699px){.fc-wrap{--pad:20px}}
 :root{--g:56px}@media (max-width:1099px){:root{--g:32px}}@media (max-width:699px){:root{--g:20px}}
 @media (prefers-reduced-motion:reduce){.fc-hd-i{translate:0 0!important} .fc-spark{scale:1!important;rotate:0deg!important;animation:none!important} .fc-um{clip-path:none!important} .fc-um img{scale:1!important;translate:0 0!important}}
-`,De={site:[{slug:`site`,f1:`Automyra SI`,f2:`AI automation studio`,f3:`An AI automation agency that builds the agents, n8n workflows and apps your team runs every day: lead gen, sales ops and back office.`,f4:`hamzaabialal@gmail.com`,f5:`+92 304 7670164`,f6:`Karachi`,f7:`Asia/Karachi`,f8:`https://calendly.com/hamzaabialal/free-ai-automation-discovery-call`,f9:`Upwork:https://www.upwork.com/agencies/2001333416097289203/, YouTube:https://www.youtube.com/@msobansiraj1, WhatsApp:https://wa.me/923047670164`,f10:`Top Rated on Upwork · 100% JSS`,f11:`Karachi, Pakistan`,f12:`Mon–Sat 10:00–22:00 PKT`,f13:`1-6 10:00-22:00`,n1:`1`}],posts:[{slug:`where-to-start-with-ai-automation`,f1:`Where to start with AI automation (it is not the chatbot)`,f2:`Guide`,f3:`7 min`,f4:`The first agent worth building is almost never the one on your homepage. Here is how we pick it on a discovery call.`,f5:`## Start where the hours are
+`,De={site:[{slug:`site`,f1:`Automyra SI`,f2:`AI automation studio`,f3:`An AI automation agency that builds the agents, n8n workflows and apps your team runs every day: lead gen, sales ops and back office.`,f4:`hamzaabialal@gmail.com`,f5:`+92 304 7670164`,f6:`Karachi`,f7:`Asia/Karachi`,f8:`https://calendly.com/hamzaabialal/free-ai-automation-discovery-call`,f9:`Upwork:https://www.upwork.com/agencies/2001333416097289203/, YouTube:https://www.youtube.com/@msobansiraj1, WhatsApp:https://wa.me/923047670164`,f10:`Top Rated on Upwork · 100% JSS`,f11:`Karachi, Pakistan`,f12:`Mon–Sat 10:00–22:00 PKT`,f13:`1-6 10:00-22:00`,n1:`1`}],posts:[{slug:`where-to-start-with-ai-automation`,f1:`Where to start with AI automation: what to automate first`,f2:`Guide`,f3:`3 min`,f4:`Not sure where to start with AI automation? Skip the chatbot. Here is how we pick the first task to automate on a discovery call.`,f5:`## Start where the hours are, not with a chatbot
 
-Most teams want a chatbot first. The hours are usually somewhere quieter: copying data between tools, chasing replies, matching documents.
+Most teams want a chatbot first. It is the most visible kind of AI, so it feels like the natural place to start. But the hours are usually somewhere quieter: copying data between tools, chasing replies, matching documents.
 
-## Three questions we ask
+That is where AI automation pays off first. The best first project is a job your team already does by hand, the same way, every week.
+
+## AI agent vs chatbot: what is the difference?
+
+A chatbot answers questions. An AI agent, or an automation workflow with AI inside it, does the work itself.
+
+- A chatbot waits for someone to ask it something.
+- An automation starts on its own when something happens, such as a new lead, an invoice in the inbox or a form being sent.
+- An AI agent can also make a judgment call along the way, such as reading a PDF or sorting a lead, and pass the unclear cases to a person.
+
+A chatbot can still be a good project. It is just rarely the one that gives your team the most hours back first.
+
+## What to automate first: three questions we ask
+
+On a discovery call, we list the tasks your team repeats and ask three questions about each one:
 
 - How often does this task happen?
 - How many minutes does it take a person?
 - What happens when it goes wrong?
 
-Multiply the first two and weigh the third. The top of that list is where to start.
+Multiply the first two and weigh the third. The top of that list is where to start. For example, a task that happens 40 times a week and takes 5 minutes each time adds up to more than three hours a week.
+
+The third question matters because some mistakes are cheap and some are not. A wrong tag on a lead is easy to fix. A wrong payment is not. Tasks with costly mistakes can still be automated, but a person should approve the last step.
+
+## Good first AI automation projects
+
+The tasks that come out on top are rarely exciting, and that is the point:
+
+- Copying data between tools, such as adding new leads or orders to your CRM.
+- Reading documents, such as pulling the supplier, dates and totals out of invoices.
+- Scoring and sorting new leads, so sales calls the best ones first.
+- Chasing replies and sending reminders and follow-ups.
+- Building the same report every week.
+
+A workflow tool like n8n connects your CRM, inbox, spreadsheets and accounting software, and a generative AI model handles the steps that need reading or writing.
 
 ## Keep a person in the loop
 
-The first version of any agent should hand the hard cases to a person, with a draft. Trust comes from the logs, not the demo.
+The first version of any AI agent should hand the hard cases to a person, with a draft. The agent does the routine work, and a person checks anything unusual before it goes out.
+
+This keeps mistakes small while you learn what the agent gets right. As the logs show it handles a type of case well, you can let it do more on its own. Trust comes from the logs, not the demo.
+
+## How to get started
+
+- List the tasks your team repeats every week.
+- Rate each one with the three questions above.
+- Automate the top task first, with a person reviewing the hard cases.
+- Check the logs, then move on to the next task.
 
 ## About the cover
 
-The cover shows one of those quiet first wins: an n8n workflow that turns incoming tasks into calendar events on its own, with a branch for each type of task, so nobody copies them across by hand.`,f6:`Muhammad Soban`,f7:`Sep 12, 2026`,img:`/assets/work/journal-where-to-start.png`,n1:`1`},{slug:`lead-scoring-with-n8n`,f1:`How we score every new lead in Close CRM with n8n`,f2:`Case note`,f3:`5 min`,f4:`Enrichment, industry and revenue classification, and a score on every lead before a rep calls.`,f5:`## The problem was the order
+The cover shows one of those quiet first wins: an n8n workflow that turns incoming tasks into calendar events on its own, with a branch for each type of task, so nobody copies them across by hand.`,f6:`Muhammad Soban`,f7:`Sep 12, 2026`,img:`/assets/work/journal-where-to-start.png`,n1:`1`},{slug:`lead-scoring-with-n8n`,f1:`AI lead scoring with n8n and Close CRM`,f2:`Case note`,f3:`3 min`,f4:`How we built AI lead scoring with n8n: every new lead in Close CRM is enriched, classified by industry and revenue, and scored before a rep calls.`,f5:`## The problem was the order
 
 Reps called leads in the order they arrived, so the best merchants waited while time went to poor fits.
 
-## What we built
+The client is a merchant cash advance (MCA) funder whose sales team works in Close CRM. New leads came in all day, and each one had to be researched by hand before a call. In funding, speed matters, so good merchants went cold while reps worked through poor fits.
 
-An n8n workflow that enriches each new lead, classifies its industry and revenue with AI, writes a score into Close CRM and sets 15- and 2-minute call reminders.
+## What is lead scoring?
+
+Lead scoring gives every new lead a score that shows how good a fit it is, so the sales team knows who to call first.
+
+Traditional lead scoring uses fixed rules, such as adding points for a certain industry or company size. AI lead scoring adds an AI model for the parts that simple rules miss, such as reading what a business does and deciding which industry it belongs to.
+
+## How our n8n lead scoring workflow works
+
+We built an n8n workflow that runs on every new lead in Close CRM within minutes of it arriving:
+
+- Enrich: missing details about the business are filled in.
+- Classify: AI sorts each lead by industry and revenue.
+- Score: the workflow writes a score into Close CRM, so the strongest merchants rise to the top of the list.
+- Remind: it sets call reminders at 15 and 2 minutes, so reps call at the right moment.
+
+## The score lives in the CRM
+
+The score is written into Close CRM itself, not into a separate report. Reps don’t need to open a new tool: they work their usual lead list, and the best leads are already at the top.
+
+## Why n8n for CRM automation
+
+n8n connects to Close CRM through its API and webhooks, and every step of the workflow is visible. When a lead gets a surprising score, you can see exactly which step gave it, and change the rules without rebuilding anything. We use the same approach for other CRM integrations, such as Zoho CRM and Kommo.
+
+Lead scoring was one part of a larger sales pipeline we automated for this client on n8n, from LinkedIn outreach to contracts signed in Zoho Sign.
+
+## If you are building your own
+
+- Start with the details your best customers have in common. They become your scoring rules.
+- Let AI handle the fuzzy parts, like industry, and keep the scoring itself in clear rules you can read.
+- Put the score where reps already work, in the CRM.
+- Compare scores with the deals you actually win, and adjust the rules.
 
 ## What changed
 
@@ -91,15 +158,37 @@ Every lead now has a score within minutes, and reps start the day with the best 
 
 ## About the cover
 
-The cover shows a sister build in Zapier for project leads: each new lead in Google Sheets is validated, sorted by contact (no email, first or second contact, or early days), emailed through Gmail, analysed with AI by Zapier, logged in Zoho CRM and moved to the archive sheet.`,f6:`Hamza B.`,f7:`Aug 28, 2026`,img:`/assets/work/journal-lead-scoring.jpg`,n1:`2`},{slug:`agents-need-guardrails`,f1:`Agents need guardrails, not just prompts`,f2:`Opinion`,f3:`6 min`,f4:`Hand-over rules, logs and a weekly review are what make an agent safe to leave alone.`,f5:`## Prompts are not policy
+The cover shows a sister build in Zapier for project leads: each new lead in Google Sheets is validated, sorted by contact (no email, first or second contact, or early days), emailed through Gmail, analysed with AI by Zapier, logged in Zoho CRM and moved to the archive sheet.`,f6:`Hamza B.`,f7:`Aug 28, 2026`,img:`/assets/work/journal-lead-scoring.jpg`,n1:`2`},{slug:`agents-need-guardrails`,f1:`AI agent guardrails: why prompts are not enough`,f2:`Opinion`,f3:`5 min`,f4:`The AI agent guardrails we put around every agent: hand-over rules, a log of every action and a weekly review. Why prompts alone are not enough.`,f5:`## Prompts are not policy
 
 A good prompt makes a good demo. Guardrails make a good week.
+
+A prompt tells an AI agent what you want. It does not stop the agent from doing what you don’t want. A model can misread an input, and an agent that acts on a wrong answer can send an email, change a record or approve a payment. Guardrails are the rules around the agent: what it may do on its own, and when a person must step in.
+
+## Generative AI vs agentic AI: why agents need more
+
+Generative AI creates content. It writes a reply, a summary or a draft, and a person decides what to do with it. Agentic AI goes a step further: the agent takes actions in your tools, such as updating a CRM, sending a message or moving a task forward.
+
+When AI only writes, a mistake is a bad draft. When AI acts, a mistake is a real action. That is why agents need guardrails, not just better prompts.
 
 ## What we put around every agent
 
 - Clear hand-over triggers
 - A log of every action
 - A weekly review in the first month
+
+## Clear hand-over triggers (human in the loop)
+
+We decide in advance which cases the agent must pass to a person: when it is unsure, when a case is unusual, or when an action is hard to undo. The agent hands over with a draft, so the person reviews it instead of starting from scratch.
+
+This is what human in the loop means in practice. Tools support it directly: in n8n, for example, a workflow can pause and wait for a person to approve a step before it continues.
+
+## A log of every action
+
+Every action the agent takes is logged: what came in, what it decided and what it did. When something looks wrong, the log shows why. Over time, the log is also the evidence that the agent can be trusted with more.
+
+## A weekly review in the first month
+
+In the first month, we review the logs every week. We look at the cases the agent handed over and the ones it handled alone, and tighten or loosen its rules based on what we find.
 
 ## The result
 
@@ -109,11 +198,11 @@ Agents that people trust enough to stop checking.
 
 The cover is GuardXFlow, an invoice tool we built around this idea. AI reads every invoice, whether a PDF, a Word file or a phone photo, and fills in the supplier, number, date, subtotal and taxes. Nothing reaches the books until a person ticks the box to confirm they have verified the extracted information.
 
-## GuardXFlow: accounts payable on autopilot
+## GuardXFlow: AI invoice processing with guardrails
 
 GuardXFlow is the accounts-payable system we built for a business in Québec. It collects every supplier invoice in one queue, reads it with AI and files it to the accounting software once a person has approved it. It is built with React 19, TanStack Start and Supabase, and connects to QuickBooks, Xero and Sage.
 
-## The problem
+## The problem: every invoice typed in by hand
 
 Supplier invoices came in from everywhere: a shared mailbox, phone photos of handwritten bills, and PDFs saved to cloud storage, often for several companies at once. Each one had to be typed into the books by hand:
 
@@ -123,7 +212,7 @@ Supplier invoices came in from everywhere: a shared mailbox, phone photos of han
 
 It was slow, easy to get wrong, and a duplicate could be paid twice if nobody noticed. The team needed the speed of AI without giving up control of the money.
 
-## What we built
+## What we built: AI reads, people approve
 
 One queue for every invoice, wherever it comes from, with AI doing the reading and people doing the approving.
 
@@ -134,7 +223,7 @@ One queue for every invoice, wherever it comes from, with AI doing the reading a
 - Several companies, one queue: each with its own fiscal year, currency and approval rules.
 - Bilingual and Québec-first: Quebecois French throughout, GST and QST, and figures read from the books rather than recalculated.
 
-## Nicol, an assistant that cannot act on its own
+## Nicol, an AI assistant that cannot act on its own
 
 Nicol answers questions in plain language, by voice or by text, across every module and the connected ledger. It can offer to approve an invoice, but the offer counts only when the person presses a confirmation card on the server. Saying ‘yes’ in the chat confirms nothing, so the AI can help without ever moving money by itself.
 

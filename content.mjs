@@ -1631,6 +1631,225 @@ const headGradient = (p) => {
   return "linear-gradient(100deg," + stops.map((c, i) => c + " " + Math.round(10 + (80 * i) / (stops.length - 1)) + "%").join(",") + ")";
 };
 
+// ---------- Journal: SEO rewrite of the three published posts ----------
+// Title, summary (also the meta description), read time and body of each post. Spread at the very end of `rules`,
+// so every rule matches the posts as the rules above leave them. A post appears as JS (the posts array), as a hidden
+// data attribute and page JSON on every page, and as rendered HTML on its own page, on /journal and in the previous
+// post's "Next read" link. Slugs, categories, dates, authors and covers stay as they are.
+// Body text uses only what the post renderer supports (## headings, - lists, paragraphs) and no ` & < > " ' characters.
+const postMd = (...blocks) => blocks.map((b) => (Array.isArray(b) ? b.map((li) => "- " + li).join("\n") : b)).join("\n\n");
+const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const POST_SEO = [
+  {
+    slug: "where-to-start-with-ai-automation",
+    cat: "Guide",
+    date: "Sep 12, 2026",
+    first: "Start where the hours are",
+    title: ["Where to start with AI automation (it is not the chatbot)", "Where to start with AI automation: what to automate first"],
+    head: "Where to start with AI automation (it is not the chatbot)",
+    sum: ["The first agent worth building is almost never the one on your homepage. Here is how we pick it on a discovery call.",
+      "Not sure where to start with AI automation? Skip the chatbot. Here is how we pick the first task to automate on a discovery call."],
+    read: ["7 min", "3 min"],
+    body: postMd(
+      "## Start where the hours are, not with a chatbot",
+      "Most teams want a chatbot first. It is the most visible kind of AI, so it feels like the natural place to start. But the hours are usually somewhere quieter: copying data between tools, chasing replies, matching documents.",
+      "That is where AI automation pays off first. The best first project is a job your team already does by hand, the same way, every week.",
+      "## AI agent vs chatbot: what is the difference?",
+      "A chatbot answers questions. An AI agent, or an automation workflow with AI inside it, does the work itself.",
+      [
+        "A chatbot waits for someone to ask it something.",
+        "An automation starts on its own when something happens, such as a new lead, an invoice in the inbox or a form being sent.",
+        "An AI agent can also make a judgment call along the way, such as reading a PDF or sorting a lead, and pass the unclear cases to a person.",
+      ],
+      "A chatbot can still be a good project. It is just rarely the one that gives your team the most hours back first.",
+      "## What to automate first: three questions we ask",
+      "On a discovery call, we list the tasks your team repeats and ask three questions about each one:",
+      [
+        "How often does this task happen?",
+        "How many minutes does it take a person?",
+        "What happens when it goes wrong?",
+      ],
+      "Multiply the first two and weigh the third. The top of that list is where to start. For example, a task that happens 40 times a week and takes 5 minutes each time adds up to more than three hours a week.",
+      "The third question matters because some mistakes are cheap and some are not. A wrong tag on a lead is easy to fix. A wrong payment is not. Tasks with costly mistakes can still be automated, but a person should approve the last step.",
+      "## Good first AI automation projects",
+      "The tasks that come out on top are rarely exciting, and that is the point:",
+      [
+        "Copying data between tools, such as adding new leads or orders to your CRM.",
+        "Reading documents, such as pulling the supplier, dates and totals out of invoices.",
+        "Scoring and sorting new leads, so sales calls the best ones first.",
+        "Chasing replies and sending reminders and follow-ups.",
+        "Building the same report every week.",
+      ],
+      "A workflow tool like n8n connects your CRM, inbox, spreadsheets and accounting software, and a generative AI model handles the steps that need reading or writing.",
+      "## Keep a person in the loop",
+      "The first version of any AI agent should hand the hard cases to a person, with a draft. The agent does the routine work, and a person checks anything unusual before it goes out.",
+      "This keeps mistakes small while you learn what the agent gets right. As the logs show it handles a type of case well, you can let it do more on its own. Trust comes from the logs, not the demo.",
+      "## How to get started",
+      [
+        "List the tasks your team repeats every week.",
+        "Rate each one with the three questions above.",
+        "Automate the top task first, with a person reviewing the hard cases.",
+        "Check the logs, then move on to the next task.",
+      ],
+      "## About the cover",
+      "The cover shows one of those quiet first wins: an n8n workflow that turns incoming tasks into calendar events on its own, with a branch for each type of task, so nobody copies them across by hand.",
+    ),
+  },
+  {
+    slug: "lead-scoring-with-n8n",
+    cat: "Case note",
+    date: "Aug 28, 2026",
+    first: "The problem was the order",
+    title: ["How we score every new lead in Close CRM with n8n", "AI lead scoring with n8n and Close CRM"],
+    head: "What a voice agent changed at six dental clinics",
+    sum: ["Enrichment, industry and revenue classification, and a score on every lead before a rep calls.",
+      "How we built AI lead scoring with n8n: every new lead in Close CRM is enriched, classified by industry and revenue, and scored before a rep calls."],
+    read: ["5 min", "3 min"],
+    body: postMd(
+      "## The problem was the order",
+      "Reps called leads in the order they arrived, so the best merchants waited while time went to poor fits.",
+      "The client is a merchant cash advance (MCA) funder whose sales team works in Close CRM. New leads came in all day, and each one had to be researched by hand before a call. In funding, speed matters, so good merchants went cold while reps worked through poor fits.",
+      "## What is lead scoring?",
+      "Lead scoring gives every new lead a score that shows how good a fit it is, so the sales team knows who to call first.",
+      "Traditional lead scoring uses fixed rules, such as adding points for a certain industry or company size. AI lead scoring adds an AI model for the parts that simple rules miss, such as reading what a business does and deciding which industry it belongs to.",
+      "## How our n8n lead scoring workflow works",
+      "We built an n8n workflow that runs on every new lead in Close CRM within minutes of it arriving:",
+      [
+        "Enrich: missing details about the business are filled in.",
+        "Classify: AI sorts each lead by industry and revenue.",
+        "Score: the workflow writes a score into Close CRM, so the strongest merchants rise to the top of the list.",
+        "Remind: it sets call reminders at 15 and 2 minutes, so reps call at the right moment.",
+      ],
+      "## The score lives in the CRM",
+      "The score is written into Close CRM itself, not into a separate report. Reps don’t need to open a new tool: they work their usual lead list, and the best leads are already at the top.",
+      "## Why n8n for CRM automation",
+      "n8n connects to Close CRM through its API and webhooks, and every step of the workflow is visible. When a lead gets a surprising score, you can see exactly which step gave it, and change the rules without rebuilding anything. We use the same approach for other CRM integrations, such as Zoho CRM and Kommo.",
+      "Lead scoring was one part of a larger sales pipeline we automated for this client on n8n, from LinkedIn outreach to contracts signed in Zoho Sign.",
+      "## If you are building your own",
+      [
+        "Start with the details your best customers have in common. They become your scoring rules.",
+        "Let AI handle the fuzzy parts, like industry, and keep the scoring itself in clear rules you can read.",
+        "Put the score where reps already work, in the CRM.",
+        "Compare scores with the deals you actually win, and adjust the rules.",
+      ],
+      "## What changed",
+      "Every lead now has a score within minutes, and reps start the day with the best leads at the top.",
+      "## About the cover",
+      "The cover shows a sister build in Zapier for project leads: each new lead in Google Sheets is validated, sorted by contact (no email, first or second contact, or early days), emailed through Gmail, analysed with AI by Zapier, logged in Zoho CRM and moved to the archive sheet.",
+    ),
+  },
+  {
+    slug: "agents-need-guardrails",
+    cat: "Opinion",
+    date: "Aug 9, 2026",
+    first: "Prompts are not policy",
+    title: ["Agents need guardrails, not just prompts", "AI agent guardrails: why prompts are not enough"],
+    head: "Agents need guardrails, not just prompts",
+    sum: ["Hand-over rules, logs and a weekly review are what make an agent safe to leave alone.",
+      "The AI agent guardrails we put around every agent: hand-over rules, a log of every action and a weekly review. Why prompts alone are not enough."],
+    read: ["6 min", "5 min"],
+    body: postMd(
+      "## Prompts are not policy",
+      "A good prompt makes a good demo. Guardrails make a good week.",
+      "A prompt tells an AI agent what you want. It does not stop the agent from doing what you don’t want. A model can misread an input, and an agent that acts on a wrong answer can send an email, change a record or approve a payment. Guardrails are the rules around the agent: what it may do on its own, and when a person must step in.",
+      "## Generative AI vs agentic AI: why agents need more",
+      "Generative AI creates content. It writes a reply, a summary or a draft, and a person decides what to do with it. Agentic AI goes a step further: the agent takes actions in your tools, such as updating a CRM, sending a message or moving a task forward.",
+      "When AI only writes, a mistake is a bad draft. When AI acts, a mistake is a real action. That is why agents need guardrails, not just better prompts.",
+      "## What we put around every agent",
+      [
+        "Clear hand-over triggers",
+        "A log of every action",
+        "A weekly review in the first month",
+      ],
+      "## Clear hand-over triggers (human in the loop)",
+      "We decide in advance which cases the agent must pass to a person: when it is unsure, when a case is unusual, or when an action is hard to undo. The agent hands over with a draft, so the person reviews it instead of starting from scratch.",
+      "This is what human in the loop means in practice. Tools support it directly: in n8n, for example, a workflow can pause and wait for a person to approve a step before it continues.",
+      "## A log of every action",
+      "Every action the agent takes is logged: what came in, what it decided and what it did. When something looks wrong, the log shows why. Over time, the log is also the evidence that the agent can be trusted with more.",
+      "## A weekly review in the first month",
+      "In the first month, we review the logs every week. We look at the cases the agent handed over and the ones it handled alone, and tighten or loosen its rules based on what we find.",
+      "## The result",
+      "Agents that people trust enough to stop checking.",
+      "## About the cover",
+      "The cover is GuardXFlow, an invoice tool we built around this idea. AI reads every invoice, whether a PDF, a Word file or a phone photo, and fills in the supplier, number, date, subtotal and taxes. Nothing reaches the books until a person ticks the box to confirm they have verified the extracted information.",
+      "## GuardXFlow: AI invoice processing with guardrails",
+      "GuardXFlow is the accounts-payable system we built for a business in Québec. It collects every supplier invoice in one queue, reads it with AI and files it to the accounting software once a person has approved it. It is built with React 19, TanStack Start and Supabase, and connects to QuickBooks, Xero and Sage.",
+      "## The problem: every invoice typed in by hand",
+      "Supplier invoices came in from everywhere: a shared mailbox, phone photos of handwritten bills, and PDFs saved to cloud storage, often for several companies at once. Each one had to be typed into the books by hand:",
+      ["Supplier, invoice number and dates", "Totals and every tax line (GST and QST)", "Line items, one by one"],
+      "It was slow, easy to get wrong, and a duplicate could be paid twice if nobody noticed. The team needed the speed of AI without giving up control of the money.",
+      "## What we built: AI reads, people approve",
+      "One queue for every invoice, wherever it comes from, with AI doing the reading and people doing the approving.",
+      [
+        "Nothing typed twice: invoices are read out of the email or the photo (supplier, number, dates, totals, tax lines and line items) and arrive ready to check.",
+        "Duplicates caught before approval: on graded evidence rather than a guess, such as an identical file, the same number and amount, or the same supplier and amount on the same day.",
+        "Smart about real bills: when a supplier prints the customer’s account number where the invoice number belongs, that counts as evidence against a duplicate, so real bills are not buried in false alarms.",
+        "Two-person control: each company can require a second approval above an amount it sets.",
+        "Several companies, one queue: each with its own fiscal year, currency and approval rules.",
+        "Bilingual and Québec-first: Quebecois French throughout, GST and QST, and figures read from the books rather than recalculated.",
+      ],
+      "## Nicol, an AI assistant that cannot act on its own",
+      "Nicol answers questions in plain language, by voice or by text, across every module and the connected ledger. It can offer to approve an invoice, but the offer counts only when the person presses a confirmation card on the server. Saying ‘yes’ in the chat confirms nothing, so the AI can help without ever moving money by itself.",
+      "## Built so the numbers are right",
+      "The books stay the source of truth. All the money logic lives in pure, tested modules with more than 400 checks, and the AI never does the arithmetic. It reads and suggests; the code calculates and people decide.",
+      "## How the client benefits",
+      [
+        "Time back: invoices arrive ready to check instead of being typed in, so checking replaces retyping.",
+        "No double payments: possible duplicates are flagged before anyone approves them.",
+        "Control stays with people: nothing reaches the books without a person, and large amounts need two.",
+        "One place for every company: all invoices in a single queue, each company with its own rules.",
+        "Works in their language and tax system: French and English, with GST and QST handled correctly.",
+        "Numbers they can trust: the figures come from the books and tested code, never from an AI guess.",
+      ],
+      "51 invoices have already gone through the AI inbox this way.",
+      "## Tech stack",
+      "React 19, TanStack Start and Supabase, connected to QuickBooks, Xero and Sage. AI reads PDFs, Word files and phone photos, and Nicol works by voice or text. The money logic runs in tested modules, not in the AI.",
+    ),
+  },
+];
+// The post body as the page renders it (mirrors the post renderer: ## -> h2, - -> one ul, else p; React escapes text)
+const postText = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
+const postHtml = (md) => {
+  const out = [];
+  let list = [];
+  const flush = () => { if (list.length) out.push("<ul>" + list.map((li) => "<li>" + postText(li) + "</li>").join("") + "</ul>"); list = []; };
+  for (const line of md.split(/\n+/).map((l) => l.trim()).filter(Boolean)) {
+    if (line.startsWith("- ")) { list.push(line.slice(2)); continue; }
+    flush();
+    out.push(line.startsWith("## ") ? H2 + postText(line.slice(3)) + "</h2>" : "<p>" + postText(line) + "</p>");
+  }
+  flush();
+  return out.join("");
+};
+const JSON_STR = '"(?:[^"\\\\]|\\\\.)*"';
+const JSON_REF = ',\\{"type":6,"value":\\d+\\},';
+const journalSeo = POST_SEO.flatMap((p) => {
+  const [oldT, T] = p.title, [oldS, S] = p.sum, [oldR, R] = p.read, B = p.body, g = "journal seo " + p.slug + ": ";
+  for (const v of [T, S, R, B]) if (/[`&<>"']|\$\{/.test(v)) throw new Error(g + "unsupported character in " + v.slice(0, 40));
+  return [
+    // Data: posts array (JS), hidden data attribute and page JSON, matched by the post's slug
+    [new RegExp("(slug:`" + p.slug + "`,f1:`)[^`]*(`,f2:`[^`]*`,f3:`)[^`]*(`,f4:`)[^`]*(`,f5:`)[^`]*(`)", "g"),
+      (m, a, b, c, d, e) => a + T + b + R + c + S + d + B + e, g + "js"],
+    [new RegExp('(data-slug="' + p.slug + '" data-f1=")[^"]*(" data-f2="[^"]*" data-f3=")[^"]*(" data-f4=")[^"]*(" data-f5=")[^"]*(")', "g"),
+      (m, a, b, c, d, e) => a + esc(T) + b + esc(R) + c + esc(S) + d + esc(B) + e, g + "data attribute"],
+    [new RegExp('("' + p.slug + '"' + JSON_REF + ")" + JSON_STR + "(" + JSON_REF + '"[^"]*"' + JSON_REF + ')"[^"]*"(' + JSON_REF + ")" + JSON_STR + "(" + JSON_REF + ")" + JSON_STR, "g"),
+      (m, a, b, c, d) => a + JSON.stringify(T) + b + JSON.stringify(R) + c + JSON.stringify(S) + d + JSON.stringify(B), g + "page json"],
+    // Rendered: the post's h1 (label and words), its <title>, og:title and twitter:title
+    [new RegExp('<h1 class="fc-hd" aria-label="' + reEsc(oldT) + '"([^>]*)><span class="fc-hd-l" aria-hidden="true">[\\s\\S]*?</span></h1>', "g"),
+      (m, a) => '<h1 class="fc-hd" aria-label="' + T + '"' + a + '><span class="fc-hd-l" aria-hidden="true">' + words(T.split(" "), 150, 45) + "</span></h1>", g + "h1"],
+    [p.head + " | Automyra SI Journal", T + " | Automyra SI Journal", g + "head title"],
+    // Rendered: title on the journal card and the "Next read" link, summary on the page, the card and the meta descriptions
+    [">" + oldT + "<", ">" + T + "<", g + "card title"],
+    [">" + oldS + "<", ">" + S + "<", g + "summary"],
+    ['content="' + oldS + '"', 'content="' + S + '"', g + "meta description"],
+    // Rendered: read time on the page and the card (matched with the post's category and date)
+    ["<em>" + p.cat + "</em>" + p.date + "<!-- --> · <!-- -->" + oldR + "<", "<em>" + p.cat + "</em>" + p.date + "<!-- --> · <!-- -->" + R + "<", g + "read time"],
+    // Rendered: the body on the post's own page (matched by its first heading)
+    [new RegExp('<div class="fc-md "><h2 style="[^"]*">' + reEsc(p.first) + "</h2>[\\s\\S]*?(?=</div></div><aside class=\"fcpo-side\">)", "g"),
+      () => '<div class="fc-md ">' + postHtml(B), g + "body html"],
+  ];
+});
+
 export const rules = [
   // Chat: show all 14 questions (the original shows 8, or 5 on phones)
   ["slice(0,M?5:8)", "slice(0,14)", "faq question count"],
@@ -1797,6 +2016,8 @@ export const rules = [
     [/(>Tools<\/dt><dd>)([\s\S]*?)(<\/dd>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "case tool pills html"],
     [/(<div class="fcsv-tools"[^>]*>)([\s\S]*?)(<\/div>)/g, (m, a, b, c) => a + toolPillHtml(b) + c, "service tool pills html"],
   ] : []),
+  // Journal: SEO rewrite of the three posts (last, see POST_SEO)
+  ...journalSeo,
 ];
 
 // ---------- Server-rendered HTML for list-style content (the scripts render the same on load) ----------
