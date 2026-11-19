@@ -43,7 +43,7 @@ const services = [
   entry({
     "Voice agents": "AI voice agents",
     "AI receptionists that answer every call, book appointments and qualify leads in a natural voice, day and night.":
-      "Phone agents that answer, qualify and book in a natural voice, inbound and outbound, day and night.",
+      "AI phone agents that answer calls, qualify leads and book appointments in a natural voice, inbound and outbound, 24/7.",
     "0 missed": "5.0★",
     "calls after hours": "Upwork rating on our voice-agent build",
     "Twilio, Vapi, Google Calendar, HubSpot": "Vapi, Retell, Twilio, ElevenLabs",
@@ -59,7 +59,7 @@ const services = [
   entry({
     "Workflow automation": "n8n & CRM automation",
     "The copy-paste between your tools, done by agents: invoices booked, CRM updated, reports sent.":
-      "The copy-paste between your tools, done by workflows: invoices synced, CRMs updated, reminders sent.",
+      "The copy-paste between your tools, done by n8n workflows and CRM integrations: invoices synced, reminders sent.",
     "31 h": "19",
     "saved per person each month": "n8n workflows shipped",
     "Make, n8n, Zapier, Xero, Slack": "n8n, Make, Zapier, Zoho, Close CRM",
@@ -73,7 +73,7 @@ const services = [
   entry({
     "Support agents": "Outreach & reply agents",
     "Chat and email agents that answer from your docs and order data, and close the ticket when they can.":
-      "LinkedIn systems that find your ICP, send connection requests, follow up and draft a reply to every DM.",
+      "LinkedIn outreach automation that finds your ICP, connects, follows up and drafts a reply to every DM.",
     "68%": "6",
     "tickets solved without a human": "outreach systems shipped",
     "Zendesk, Intercom, Shopify, Gorgias": "Unipile, LinkedIn, OpenAI, n8n",
@@ -89,7 +89,7 @@ const services = [
   entry({
     "AI knowledge base": "AI document processing",
     "One search box over your drive, wiki and inbox that answers in plain words, with sources.":
-      "PDFs, invoices, contracts and filings read by AI and turned into clean data in your sheets and tools.",
+      "Invoices, PDFs, contracts and filings read by AI and turned into structured data in your sheets, CRM and accounting tools.",
     "9 s": "5",
     "to find any answer": "document & PDF pipelines",
     "Notion, Google Drive, Confluence, Slack": "OpenAI, Google Drive, Slack, QuickBooks",
@@ -105,7 +105,7 @@ const services = [
   entry({
     "Custom AI apps": "Custom AI apps & SaaS",
     "Internal tools built around a model: proposal writers, quote builders, lead scorers.":
-      "Web apps, portals, SaaS products and mobile apps built around a model: dashboards, scorers, extractors.",
+      "Custom web apps, client portals, SaaS products and mobile apps built around AI: dashboards, scorers, extractors.",
     "4 wks": "12",
     "from idea to live tool": "apps & SaaS products shipped",
     "OpenAI, Anthropic, Supabase, Retool": "React, Python, OpenAI, Vercel",
@@ -657,7 +657,7 @@ const cases = [
     "+38%": "24/7",
     "appointments booked": "calls answered",
     "Six clinics, one phone line that never rings out. The agent books, moves and confirms visits in the practice software.":
-      "A voice agent on Vapi, Retell and Twilio that answers, qualifies callers and books them in, with summaries sent to the CRM.",
+      "An AI voice agent on Vapi, Retell and Twilio that answers, qualifies callers and books them in, with summaries sent to the CRM.",
     "Voice agent": "AI voice agent",
     "Six clinics shared one phone line. After 5 pm and at lunch, a third of calls rang out, and every missed call was a lost appointment.":
       "Calls after hours and in busy periods went to voicemail, and most of those callers never called back.",
@@ -678,7 +678,7 @@ const cases = [
     "2 days": "100%",
     "month-end close": "of new leads scored automatically",
     "Invoices, receipts and bank lines matched by an agent, with a person approving the exceptions.":
-      "New leads in Close CRM are enriched, classified by industry and revenue, and scored within minutes.",
+      "AI lead scoring with n8n: new leads in Close CRM are enriched, classified by industry and revenue, and scored within minutes.",
     "Month-end took nine days: some 8,000 invoices, receipts and bank lines a month, matched by hand across three tools.":
       "Reps worked leads in the order they arrived, so the best merchants waited while time went to poor fits.",
     "An invoice agent that reads every document, matches it to purchase orders and bank lines, books it in Xero and sends only the exceptions to a person.":
@@ -698,7 +698,7 @@ const cases = [
     "71%": "4 wks",
     "tickets resolved by AI": "from kickoff to live portal",
     "Order questions, returns and delivery changes answered in seconds from Shopify data.":
-      "Owners see their properties, bookings and statements in one place instead of asking the team by email.",
+      "A custom client portal where each property owner sees their properties, bookings and statements, instead of asking the team by email.",
     "Support agent": "Custom AI app",
     "Order questions, returns and delivery changes filled the help desk; replies took six hours at peak.":
       "Owner updates lived in spreadsheets and email threads, and the team spent hours every week answering the same owner questions.",
@@ -735,7 +735,7 @@ const cases = [
     "40 s": "< 2 min",
     "first reply to a lead": "from listing to model",
     "Every portal enquiry gets a reply, a viewing slot and a CRM record before the agent has read it.":
-      "Real-estate listings scraped from Centris and dropped straight into an investment model.",
+      "Real-estate listings scraped from Centris and turned into a financial model automatically, with Python and n8n.",
     "Portal enquiries waited hours for a reply; by then buyers had called three other agents.":
       "Analysts copied listing details into a spreadsheet model one property at a time.",
     "A lead agent that replies within a minute, qualifies the buyer, offers viewing slots and writes the CRM record before a person reads it.":
@@ -1840,6 +1840,59 @@ const journalSeo = POST_SEO.flatMap((p) => {
   ];
 });
 
+// ---------- Site copy: SEO metadata and server-rendered headings ----------
+// Spread at the very end of `rules`, so each rule matches the text the rules above leave.
+// 1. Head-only text: the homepage meta description (the hero copy keeps its own text) and three page titles.
+const HOME_DESC = [
+  "Automyra SI is an AI automation agency. We build AI agents, n8n workflows and CRM automations that score your leads, extract your invoices and follow up for you — connected to the tools you already use.",
+  "Automyra SI is an AI automation agency. We build AI agents, n8n workflows and CRM integrations that score leads, process documents and follow up for you.",
+];
+const PAGE_TITLES = [
+  ["Case Studies — AI Agents in Production | Automyra SI", "AI Automation Case Studies — AI Agents in Production | Automyra SI"],
+  ["How We Work — Discover, Build, Support | Automyra SI", "Our AI Automation Process — Discover, Build, Support | Automyra SI"],
+  ["Contact | Automyra SI Automation Agency", "Contact Automyra SI — AI Automation Agency"],
+];
+// 2. Service pages: the server-rendered <title> still names the template service; the runtime titles each page
+//    "<service name> — AI Automation Service | Automyra SI", so the server HTML now says the same.
+const SERVICE_HEAD_TITLES = [
+  ["Voice agents", "AI voice agents"],
+  ["Workflow automation", "n8n &amp; CRM automation"],
+  ["Support agents", "Outreach &amp; reply agents"],
+  ["AI knowledge base", "AI document processing"],
+  ["Custom AI apps", "Custom AI apps &amp; SaaS"],
+];
+// 3. Split-word headings whose server-rendered words still hold the template's text (the label and the page after
+//    load are right): the words are rebuilt from the label. Same word count: words swapped in place, keeping lines,
+//    accent and timing. Otherwise one line with the heading's own start delay and step, as the script renders it.
+const SSR_HEADINGS = [
+  "Five kinds of systems. One standard.",
+  "AI voice agents", "n8n & CRM automation", "Outreach & reply agents", "AI document processing", "Custom AI apps & SaaS",
+  "Every call answered, day and night", "Listings to financial model, automatically", "One portal for every property owner",
+  "Every lead scored before a rep picks up the phone", "Proxy filings turned into ballot items in minutes",
+];
+const WORD_SLOT = /(transition-delay:\d+ms;--pd:\d+ms">(?:<span class="fc-it">)?)([^<]+)/g;
+const rebuildHeading = (label, inner) => {
+  const want = label.replace(/\|/g, " ").replace(/&/g, "&amp;").split(/\s+/).filter(Boolean);
+  const have = [...inner.matchAll(WORD_SLOT)];
+  if (have.length === want.length) { let i = 0; return inner.replace(WORD_SLOT, (m, pre) => pre + want[i++]); }
+  if (/is-acc|fc-hd-l[^>]*>[\s\S]*fc-hd-l/.test(inner)) throw new Error("ssr heading: accent or several lines with a new word count: " + label);
+  const d = have.map((m) => +m[1].match(/delay:(\d+)/)[1]);
+  return '<span class="fc-hd-l" aria-hidden="true">' + words(want, d[0], d[1] - d[0]) + "</span>";
+};
+// 4. Homepage hero: the server-rendered labels of the animated core still name the template's shapes; the script
+//    shows "AI agent, n8n workflow, Lead scoring" (the shapes rule above), so the server HTML now says the same.
+const siteSeo = [
+  ['<b class="is-on">AI voice agent</b><b class>Workflow</b><b class>Knowledge base</b>',
+    '<b class="is-on">AI agent</b><b class>n8n workflow</b><b class>Lead scoring</b>', "site seo: hero core labels"],
+  ['aria-label="Morph the core, now showing Voice agent"', 'aria-label="Morph the core, now showing AI agent"', "site seo: hero core label"],
+  ["description:`" + HOME_DESC[0] + "`", "description:`" + HOME_DESC[1] + "`", "site seo: home description js"],
+  ['content="' + HOME_DESC[0] + '"', 'content="' + HOME_DESC[1] + '"', "site seo: home description meta"],
+  ...PAGE_TITLES.map(([from, to]) => [from, to, "site seo: title " + to]),
+  ...SERVICE_HEAD_TITLES.map(([from, to]) => [from + " — AI Automation Service | Automyra SI", to + " — AI Automation Service | Automyra SI", "site seo: service head title " + to]),
+  ...SSR_HEADINGS.map((label) => [new RegExp('(<h([12]) class="fc-hd" aria-label="' + reEsc(label) + '"[^>]*>)([\\s\\S]*?)(</h\\2>)', "g"),
+    (m, open, n, inner, close) => open + rebuildHeading(label, inner) + close, "site seo: ssr heading " + label]),
+];
+
 export const rules = [
   // Chat: show all 14 questions (the original shows 8, or 5 on phones)
   ["slice(0,M?5:8)", "slice(0,14)", "faq question count"],
@@ -2008,6 +2061,8 @@ export const rules = [
   ] : []),
   // Journal: SEO rewrite of the three posts (last, see POST_SEO)
   ...journalSeo,
+  // Site copy: metadata and server-rendered headings (last, see siteSeo)
+  ...siteSeo,
 ];
 
 // ---------- Server-rendered HTML for list-style content (the scripts render the same on load) ----------
